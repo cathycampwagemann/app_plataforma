@@ -7,7 +7,6 @@ import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 import requests
-from PyPDF2 import PdfFileReader, PdfFileWriter
 from io import BytesIO
 from datetime import datetime, timedelta,timezone
 import pytz
