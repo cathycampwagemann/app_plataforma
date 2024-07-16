@@ -1,7 +1,7 @@
 import streamlit as st
 import os
 import sqlite3
-from google.cloud import storage, firestore
+from google.cloud import storage
 import secrets
 import smtplib
 from email.mime.multipart import MIMEMultipart
@@ -12,18 +12,11 @@ from io import BytesIO
 from datetime import datetime, timedelta,timezone
 import pytz
 import fitz
-from pdf2image import convert_from_path
-from PIL import Image, ImageDraw, ImageFont
-from reportlab.pdfgen import canvas
-from reportlab.lib.pagesizes import letter
-from PyPDF2.generic import NameObject, createStringObject
-import PyKCS11
 from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.primitives.asymmetric import padding
 from cryptography.hazmat.primitives.serialization import load_pem_private_key, pkcs12
 from cryptography.hazmat.backends import default_backend
 import tempfile
-from PIL import Image
 import streamlit.components.v1 as components
 import pandas as pd
 import os.path
