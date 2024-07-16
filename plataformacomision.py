@@ -42,16 +42,21 @@ access_key = os.getenv('HMAC_ACCESS_KEY')
 secret_key = os.getenv('HMAC_SECRET_KEY')
 
 if not access_key or not secret_key:
-    raise Exception("HMAC credentials not set in environment variables.")
+    st.error("HMAC credentials not set in environment variables.")
+    st.stop()
 
-# Configurar el cliente de boto3
-storage_client = boto3.client(
-    's3',
-    aws_access_key_id=access_key,
-    aws_secret_access_key=secret_key,
-    endpoint_url='https://storage.googleapis.com',
-    config=Config(signature_version='s3v4')
-)
+@st.cache_resource
+def get_storage_client():
+    return boto3.client(
+        's3',
+        aws_access_key_id=access_key,
+        aws_secret_access_key=secret_key,
+        endpoint_url='https://storage.googleapis.com',
+        config=Config(signature_version='s3v4')
+    )
+
+# Inicializar el cliente de storage
+storage_client = get_storage_client()
 
 # Configuración de la base de datos
 db_config = {
