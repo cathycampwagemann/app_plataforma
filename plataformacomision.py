@@ -6,7 +6,6 @@ import secrets
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-import requests
 from io import BytesIO
 from datetime import datetime, timedelta,timezone
 import pytz
@@ -22,7 +21,7 @@ import smtplib
 import boto3
 from botocore.client import Config
 import mysql.connector
-from mysql.connector import errorcode
+from mysql.connector import errorcode, pooling
 import uuid
 
 drive_image_url = "data:image/jpeg;base64,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"
@@ -54,201 +53,37 @@ storage_client = boto3.client(
     config=Config(signature_version='s3v4')
 )
 
-load_dotenv()
+# Configuración de la base de datos
+db_config = {
+    'user': os.getenv('DB_USER'),
+    'password': os.getenv('DB_PASSWORD'),
+    'host': os.getenv('DB_HOST'),
+    'database': os.getenv('DB_NAME'),
+    'port': int(os.getenv('DB_PORT'))
+}
 
-def connect_to_cloud_sql():
-    try:
-        conn = mysql.connector.connect(
-            user=os.getenv('DB_USER'),
-            password=os.getenv('DB_PASSWORD'),
-            host=os.getenv('DB_HOST'),
-            database=os.getenv('DB_NAME'),
-            port=int(os.getenv('DB_PORT'))
-        )
-        print("Conexión exitosa a la base de datos")
-        return conn
-    except mysql.connector.Error as err:
-        if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
-            print("Algo está mal con tu nombre de usuario o contraseña")
-        elif err.errno == errorcode.ER_BAD_DB_ERROR:
-            print("La base de datos no existe")
-        else:
-            print(err)
-        return None
+connection_pool = pooling.MySQLConnectionPool(pool_name="mypool",
+                                              pool_size=5,
+                                              **db_config)
 
-conn = connect_to_cloud_sql()
-if conn:
+@st.cache_data
+def get_connection():
+    return connection_pool.get_connection()
+
+def execute_query(query, params=None):
+    conn = get_connection()
     cursor = conn.cursor()
-
     try:
-
-        # Creación de la tabla users
-        cursor.execute('''
-            CREATE TABLE IF NOT EXISTS `users` (
-                `id` INT AUTO_INCREMENT PRIMARY KEY,
-                `username` VARCHAR(255) UNIQUE,
-                `password` VARCHAR(255),
-                `email` VARCHAR(255) UNIQUE,
-                `role` VARCHAR(50)
-            )
-        ''')
-
-        # Tablas comisión arbitral
-        cursor.execute('''
-            CREATE TABLE IF NOT EXISTS `user_permissions_com_arbitral` (
-                `user_id_com_arbitral` INT,
-                `bucket_name_com_arbitral` VARCHAR(255),
-                FOREIGN KEY (`user_id_com_arbitral`) REFERENCES `users` (`id`)
-            )
-        ''')
-
-        cursor.execute('''
-            CREATE TABLE IF NOT EXISTS `password_resets_com_arbitral` (
-                `id` INT AUTO_INCREMENT PRIMARY KEY,
-                `user_id_com_arbitral` INT,
-                `token_com_arbitral` VARCHAR(255),
-                FOREIGN KEY (`user_id_com_arbitral`) REFERENCES `users` (`id`)
-            )
-        ''')
-
-        cursor.execute('''
-            CREATE TABLE IF NOT EXISTS `main_files_com_arbitral` (
-                `id` INT AUTO_INCREMENT PRIMARY KEY,
-                `name_com_arbitral` VARCHAR(255),
-                `section_com_arbitral` VARCHAR(255),
-                `stage_com_arbitral` VARCHAR(255),
-                `gcs_path_com_arbitral` VARCHAR(255),
-                `bucket_name_com_arbitral` VARCHAR(255),
-                `file_url_com_arbitral` VARCHAR(255),
-                `emisor_doc` VARCHAR(255),
-                `uploaded_at_com_arbitral` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                `proveido_com_arbitral` BOOLEAN DEFAULT 0
-            )
-        ''')
-
-        cursor.execute('''
-            CREATE TABLE IF NOT EXISTS `attached_files_com_arbitral` (
-                `id` INT AUTO_INCREMENT PRIMARY KEY,
-                `main_file_com_arbitral_id` INT,
-                `name` VARCHAR(255),
-                `gcs_path_com_arbitral` VARCHAR(255),
-                `uploaded_at_com_arbitral` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                FOREIGN KEY (`main_file_com_arbitral_id`) REFERENCES `main_files_com_arbitral` (`id`)
-            )
-        ''')
-
-        cursor.execute('''
-            CREATE TABLE IF NOT EXISTS `causa_comision_arbitral` (
-                `id` INT AUTO_INCREMENT PRIMARY KEY,
-                `tribunal` VARCHAR(255),
-                `demandante` VARCHAR(255),
-                `demandado` VARCHAR(255),
-                `fecha_inicio` DATE,
-                `bucket_name_com_arbitral` VARCHAR(255)
-            )
-        ''')
-
-        cursor.execute('''
-            CREATE TABLE IF NOT EXISTS `notifications_com_arbitral` (
-                `id` INT AUTO_INCREMENT PRIMARY KEY,
-                `user_id` INT,
-                `message` TEXT,
-                `timestamp` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
-            )
-        ''')
-
-        cursor.execute('''
-            CREATE TABLE IF NOT EXISTS `notificaciones_com_arbitral` (
-                `id` INT AUTO_INCREMENT PRIMARY KEY,
-                `bucket_name_com_arbitral` VARCHAR(255),
-                `archivo` VARCHAR(255),
-                `fecha` DATE,
-                `emails` TEXT
-            )
-        ''')
-
-        # Tablas comisión conciliadora
-        cursor.execute('''
-            CREATE TABLE IF NOT EXISTS `user_permissions_com_conciliadora` (
-                `user_id_com_conciliadora` INT,
-                `bucket_name_com_conciliadora` VARCHAR(255),
-                FOREIGN KEY (`user_id_com_conciliadora`) REFERENCES `users` (`id`)
-            )
-        ''')
-
-        cursor.execute('''
-            CREATE TABLE IF NOT EXISTS `password_resets_com_conciliadora` (
-                `id` INT AUTO_INCREMENT PRIMARY KEY,
-                `user_id_com_conciliadora` INT,
-                `token_com_conciliadora` VARCHAR(255),
-                FOREIGN KEY (`user_id_com_conciliadora`) REFERENCES `users` (`id`)
-            )
-        ''')
-
-        cursor.execute('''
-            CREATE TABLE IF NOT EXISTS `main_files_com_conciliadora` (
-                `id` INT AUTO_INCREMENT PRIMARY KEY,
-                `name_com_conciliadora` VARCHAR(255),
-                `gcs_path_com_conciliadora` VARCHAR(255),
-                `bucket_name_com_conciliadora` VARCHAR(255),
-                `file_url_com_conciliadora` VARCHAR(255),
-                `emisor_doc2` VARCHAR(255),
-                `uploaded_at_com_conciliadora` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                `proveido_com_conciliadora` BOOLEAN DEFAULT 0
-            )
-        ''')
-
-        cursor.execute('''
-            CREATE TABLE IF NOT EXISTS `attached_files_com_conciliadora` (
-                `id` INT AUTO_INCREMENT PRIMARY KEY,
-                `main_file_com_conciliadora_id` INT,
-                `name` VARCHAR(255),
-                `gcs_path_com_conciliadora` VARCHAR(255),
-                `uploaded_at_com_conciliadora` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                FOREIGN KEY (`main_file_com_conciliadora_id`) REFERENCES `main_files_com_conciliadora` (`id`)
-            )
-        ''')
-
-        cursor.execute('''
-            CREATE TABLE IF NOT EXISTS `causa_comision_conciliadora` (
-                `id` INT AUTO_INCREMENT PRIMARY KEY,
-                `comision` VARCHAR(255),
-                `requirente` VARCHAR(255),
-                `requerido` VARCHAR(255),
-                `fecha_inicio` DATE,
-                `bucket_name_com_conciliadora` VARCHAR(255)
-            )
-        ''')
-
-        cursor.execute('''
-            CREATE TABLE IF NOT EXISTS `notifications_com_conciliadora` (
-                `id` INT AUTO_INCREMENT PRIMARY KEY,
-                `user_id` INT,
-                `message` TEXT,
-                `timestamp` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
-            )
-        ''')
-
-        cursor.execute('''
-            CREATE TABLE IF NOT EXISTS `notificaciones_com_conciliadora` (
-                `id` INT AUTO_INCREMENT PRIMARY KEY,
-                `bucket_name_com_conciliadora` VARCHAR(255),
-                `archivo` VARCHAR(255),
-                `fecha` DATE,
-                `emails` TEXT
-            )
-        ''')
-
-        conn.commit()
-        print("Todas las tablas se han creado correctamente")
+        cursor.execute(query, params)
+        results = cursor.fetchall()
+        return results
     except mysql.connector.Error as err:
-        print(f"Error al crear las tablas: {err}")
+        st.error(f"Error: {err}")
+        return None
     finally:
         cursor.close()
         conn.close()
-
+        
 # Función para crear bucket Comisión arbitral
 def create_bucket_com_arbitral(bucket_name_com_arbitral):
     
