@@ -69,14 +69,21 @@ db_config = {
 }
 
 # Configuración del pool de conexiones
-connection_pool = pooling.MySQLConnectionPool(pool_name="mypool",
-                                              pool_size=5,
-                                              **db_config)
+try:
+    connection_pool = pooling.MySQLConnectionPool(pool_name="mypool",
+                                                  pool_size=5,
+                                                  **db_config)
+except mysql.connector.Error as err:
+    st.error(f"Error while creating connection pool: {err}")
+    st.stop()
 
-@st.cache_data
 def get_connection():
-    return connection_pool.get_connection()
-
+    try:
+        return connection_pool.get_connection()
+    except mysql.connector.Error as err:
+        st.error(f"Error while getting connection from pool: {err}")
+        st.stop()
+        
 def execute_query(query, params=None):
     conn = get_connection()
     cursor = conn.cursor()
