@@ -131,7 +131,7 @@ def create_bucket_com_conciliadora(bucket_name_com_conciliadora):
             return None
 
 # Función para autenticar comisión arbitral y conciliadora
-def authenticate_com_arbitral(username, password):
+def authenticate_com_conciliadora(username, password):
     conn = get_connection()
     if conn is None:
         return False
