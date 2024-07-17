@@ -42,14 +42,11 @@ def get_env_variable(var_name):
         st.stop()
     return var_value
 
-# Configurar las credenciales HMAC desde las variables de entorno
-access_key = os.getenv('HMAC_ACCESS_KEY')
-secret_key = os.getenv('HMAC_SECRET_KEY')
+# Verificar y obtener las credenciales HMAC desde las variables de entorno
+access_key = get_env_variable('HMAC_ACCESS_KEY')
+secret_key = get_env_variable('HMAC_SECRET_KEY')
 
-if not access_key or not secret_key:
-    st.error("HMAC credentials not set in environment variables.")
-    st.stop()
-
+# Configuración del cliente de storage
 @st.cache_resource
 def get_storage_client():
     return boto3.client(
@@ -63,15 +60,23 @@ def get_storage_client():
 # Inicializar el cliente de storage
 storage_client = get_storage_client()
 
+# Verificar y obtener las variables de entorno para la base de datos
+db_user = get_env_variable('DB_USER')
+db_password = get_env_variable('DB_PASSWORD')
+db_host = get_env_variable('DB_HOST')
+db_name = get_env_variable('DB_NAME')
+db_port = int(get_env_variable('DB_PORT'))
+
 # Configuración de la base de datos
 db_config = {
-    'user': os.getenv('DB_USER'),
-    'password': os.getenv('DB_PASSWORD'),
-    'host': os.getenv('DB_HOST'),
-    'database': os.getenv('DB_NAME'),
-    'port': int(os.getenv('DB_PORT'))
+    'user': db_user,
+    'password': db_password,
+    'host': db_host,
+    'database': db_name,
+    'port': db_port
 }
 
+# Configuración del pool de conexiones
 connection_pool = pooling.MySQLConnectionPool(pool_name="mypool",
                                               pool_size=5,
                                               **db_config)
@@ -93,6 +98,12 @@ def execute_query(query, params=None):
     finally:
         cursor.close()
         conn.close()
+
+# Verificar el resto de las variables de entorno necesarias (SMTP)
+smtp_server = get_env_variable('SMTP_SERVER')
+smtp_port = int(get_env_variable('SMTP_PORT'))
+from_email = get_env_variable('FROM_EMAIL')
+from_password = get_env_variable('FROM_PASSWORD')
         
 # Función para crear bucket Comisión arbitral
 def create_bucket_com_arbitral(bucket_name_com_arbitral):
