@@ -46,11 +46,6 @@ def get_env_variable(var_name):
 access_key = get_env_variable('HMAC_ACCESS_KEY')
 secret_key = get_env_variable('HMAC_SECRET_KEY')
 
-# Mensajes de depuración
-st.write(f"HMAC_ACCESS_KEY: {access_key}")
-st.write(f"HMAC_SECRET_KEY: {secret_key}")
-
-
 # Configuración del cliente de storage
 @st.cache_resource
 def get_storage_client():
