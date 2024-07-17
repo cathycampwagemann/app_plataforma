@@ -124,10 +124,9 @@ def create_bucket_com_conciliadora(bucket_name_com_conciliadora):
 
 # Función para autenticar comisión arbitral y conciliadora
 
-def authenticate_com_conciliadora(username, password):
-    conn = connect_to_cloud_sql()
+    conn = get_connection()
     if conn is None:
-        return
+        return False
 
     c = conn.cursor()
 
@@ -142,16 +141,17 @@ def authenticate_com_conciliadora(username, password):
             return True
         return False
     except mysql.connector.Error as err:
-        print(f"Error: {err}")
+        st.error(f"Error: {err}")
         return False
     finally:
         c.close()
         conn.close()
 
+# Función para autenticar comisión arbitral
 def authenticate_com_arbitral(username, password):
-    conn = connect_to_cloud_sql()
+    conn = get_connection()
     if conn is None:
-        return
+        return False
 
     c = conn.cursor()
 
@@ -166,11 +166,12 @@ def authenticate_com_arbitral(username, password):
             return True
         return False
     except mysql.connector.Error as err:
-        print(f"Error: {err}")
+        st.error(f"Error: {err}")
         return False
     finally:
         c.close()
         conn.close()
+        
 # Interfaz principal comisión arbitral
 
 def main_interface_com_arbitral():
