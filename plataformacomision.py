@@ -43,8 +43,12 @@ def get_env_variable(var_name):
     return var_value
 
 # Verificar y obtener las credenciales HMAC desde las variables de entorno
-access_key = get_env_variable('HMAC_ACCESS_KEY')
-secret_key = get_env_variable('HMAC_SECRET_KEY')
+access_key = os.getenv('HMAC_ACCESS_KEY')
+secret_key = os.getenv('HMAC_SECRET_KEY')
+
+# Mensajes de depuración
+st.write(f"HMAC_ACCESS_KEY: {access_key}")
+st.write(f"HMAC_SECRET_KEY: {secret_key}")
 
 # Configuración del cliente de storage
 @st.cache_resource
