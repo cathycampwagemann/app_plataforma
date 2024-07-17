@@ -24,7 +24,22 @@ jobs:
           pip install -r requirements.txt
 
       - name: Print environment variables
-        run: printenv
+        env:
+          DB_USER: ${{ secrets.DB_USER }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          DB_HOST: ${{ secrets.DB_HOST }}
+          DB_NAME: ${{ secrets.DB_NAME }}
+          DB_PORT: ${{ secrets.DB_PORT }}
+          HMAC_ACCESS_KEY: ${{ secrets.HMAC_ACCESS_KEY }}
+          HMAC_SECRET_KEY: ${{ secrets.HMAC_SECRET_KEY }}
+          SMTP_SERVER: ${{ secrets.SMTP_SERVER }}
+          SMTP_PORT: ${{ secrets.SMTP_PORT }}
+          FROM_EMAIL: ${{ secrets.FROM_EMAIL }}
+          FROM_PASSWORD: ${{ secrets.FROM_PASSWORD }}
+        run: |
+          echo "HMAC_ACCESS_KEY: $HMAC_ACCESS_KEY"
+          echo "HMAC_SECRET_KEY: $HMAC_SECRET_KEY"
+          echo "DB_USER: $DB_USER"
 
       - name: Deploy to Streamlit
         env:
