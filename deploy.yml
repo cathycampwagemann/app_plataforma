@@ -1,3 +1,90 @@
+
+Entiendo que a pesar de que has configurado correctamente los secretos en GitHub, el workflow de GitHub Actions sigue sin reconocerlos. Vamos a realizar algunos pasos adicionales para diagnosticar y resolver este problema.
+
+Pasos para Diagnosticar y Resolver el Problema
+Revisar y Confirmar Configuración de Secrets en GitHub:
+
+Asegúrate de que los nombres de los secretos en GitHub coincidan exactamente con los nombres utilizados en el archivo YAML (HMAC_ACCESS_KEY, HMAC_SECRET_KEY, etc.).
+Revisa los secretos en Settings > Secrets and variables > Actions en tu repositorio. Asegúrate de que los secretos están correctamente configurados y que no tienen errores tipográficos.
+Verificar el Archivo YAML:
+
+Verifica que el archivo YAML está configurado correctamente para pasar los secretos como variables de entorno.
+Revisar la Configuración del Repositorio:
+
+Asegúrate de que el repositorio de GitHub tiene habilitadas las GitHub Actions y que no hay restricciones que impidan la ejecución del workflow.
+Revisión de Secrets en GitHub
+Accede a tu Repositorio en GitHub:
+
+Ve a tu repositorio en GitHub.
+Haz clic en Settings.
+En el menú lateral, selecciona Secrets and variables > Actions.
+Revisa los Secrets:
+
+Asegúrate de que los siguientes secretos están configurados correctamente:
+HMAC_ACCESS_KEY
+HMAC_SECRET_KEY
+DB_USER
+DB_PASSWORD
+DB_NAME
+DB_HOST
+DB_PORT
+SMTP_SERVER
+SMTP_PORT
+FROM_EMAIL
+FROM_PASSWORD
+Prueba con un Archivo YAML Mínimo
+Vamos a crear un archivo YAML mínimo para imprimir las variables de entorno y verificar que los secretos se están pasando correctamente.
+
+Archivo YAML Mínimo para Verificar Secrets
+Crea un archivo YAML mínimo llamado .github/workflows/test-secrets.yml en tu repositorio con el siguiente contenido:
+
+yaml
+Copiar código
+name: Test Secrets
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  test-secrets:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Print environment variables
+        env:
+          HMAC_ACCESS_KEY: ${{ secrets.HMAC_ACCESS_KEY }}
+          HMAC_SECRET_KEY: ${{ secrets.HMAC_SECRET_KEY }}
+          DB_USER: ${{ secrets.DB_USER }}
+        run: |
+          echo "HMAC_ACCESS_KEY: $HMAC_ACCESS_KEY"
+          echo "HMAC_SECRET_KEY: $HMAC_SECRET_KEY"
+          echo "DB_USER: $DB_USER"
+Pasos para Probar
+Crear el Archivo YAML:
+
+Crea el archivo .github/workflows/test-secrets.yml en tu repositorio con el contenido anterior.
+Hacer un Push:
+
+Haz un push a la rama master para ejecutar el workflow y verificar que los secretos se están pasando correctamente.
+Revisa los Logs
+Ejecuta el Workflow:
+
+Ve a la sección Actions de tu repositorio en GitHub.
+Selecciona la ejecución más reciente del workflow.
+Revisa los Logs:
+
+Verifica los logs generados por el paso Print environment variables para ver si HMAC_ACCESS_KEY, HMAC_SECRET_KEY, y DB_USER están presentes.
+Ejemplo Completo del Archivo YAML de Despliegue
+Una vez que hayas verificado que los secretos se están pasando correctamente, puedes actualizar tu archivo YAML principal para continuar con el despliegue.
+
+Archivo YAML Completo
+yaml
+Copiar código
 name: Deploy Streamlit App
 
 on:
