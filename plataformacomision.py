@@ -35,7 +35,12 @@ logo_html = f"""
 # Insertar el HTML en la aplicación Streamlit
 components.html(logo_html, height=150)
 
-load_dotenv()
+def get_env_variable(var_name):
+    var_value = os.getenv(var_name)
+    if not var_value:
+        st.error(f"{var_name} is not set in environment variables.")
+        st.stop()
+    return var_value
 
 # Configurar las credenciales HMAC desde las variables de entorno
 access_key = os.getenv('HMAC_ACCESS_KEY')
