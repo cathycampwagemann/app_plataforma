@@ -36,15 +36,15 @@ logo_html = f"""
 components.html(logo_html, height=150)
 
 def get_env_variable(var_name):
-    var_value = os.getenv(var_name)
+    var_value = st.secrets.get(var_name)
     if not var_value:
-        st.error(f"{var_name} is not set in environment variables.")
+        st.error(f"{var_name} is not set in secrets.")
         st.stop()
-    return var_value
+    return var_valu
 
 # Verificar y obtener las credenciales HMAC desde las variables de entorno
-access_key = os.getenv('HMAC_ACCESS_KEY')
-secret_key = os.getenv('HMAC_SECRET_KEY')
+access_key = get_env_variable('HMAC_ACCESS_KEY')
+secret_key = get_env_variable('HMAC_SECRET_KEY')
 
 # Configuración del cliente de storage
 @st.cache_resource
