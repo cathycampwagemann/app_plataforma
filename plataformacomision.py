@@ -40,7 +40,7 @@ def get_env_variable(var_name):
     if not var_value:
         st.error(f"{var_name} is not set in secrets.")
         st.stop()
-    return var_valu
+    return var_value
 
 # Verificar y obtener las credenciales HMAC desde las variables de entorno
 access_key = get_env_variable('HMAC_ACCESS_KEY')
