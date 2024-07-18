@@ -1486,7 +1486,7 @@ def reset_password(token, new_password):
         conn.close()
 
 def reset_password_interface():
-    token = st.experimental_get_query_params().get('token', [None])[0]
+    token = st.query_params().get('token', [None])[0]
     if token:
         st.header('Restablecer Contraseña')
         new_password = st.text_input('Nueva Contraseña', type='password')
