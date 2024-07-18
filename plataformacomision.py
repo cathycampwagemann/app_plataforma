@@ -262,15 +262,6 @@ def main_interface_com_arbitral():
             reset_modes_a('ver_notificaciones_ca')
             st.session_state['ver_notificaciones_ca']=True
 
-    if st.session_state.get('user_role') == 'admin':
-        if st.button("Crear nuevas causas y usuarios", key="com_arb_new"):
-            reset_modes_a('crear_nueva_causa_usuario')
-            st.session_state['crear_nueva_causa_usuario']=True
-
-        if st.button("Asignar nuevos permisos", key="com_arb_new_permisos"):
-            reset_modes_a('asignar_nuevos_permisos_usuarios')
-            st.session_state['asignar_nuevos_permisos_usuarios']=True
-
         if 'upload_mode_com_a' in st.session_state:
             upload_file_interface_com_arbitral()
 
@@ -279,6 +270,15 @@ def main_interface_com_arbitral():
 
         if 'ver_notificaciones_ca' in st.session_state:
             notificaciones_interface_com_arbitral()
+
+        if st.session_state.get('user_role') == 'admin':
+            if st.button("Crear nuevas causas y usuarios", key="com_arb_new"):
+                reset_modes_a('crear_nueva_causa_usuario')
+                st.session_state['crear_nueva_causa_usuario']=True
+
+            if st.button("Asignar nuevos permisos", key="com_arb_new_permisos"):
+                reset_modes_a('asignar_nuevos_permisos_usuarios')
+                st.session_state['asignar_nuevos_permisos_usuarios']=True
 
         if 'crear_nueva_causa_usuario' in st.session_state:
             crear_nueva_causa()
