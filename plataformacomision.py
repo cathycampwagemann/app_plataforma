@@ -1421,108 +1421,37 @@ def get_causa_info_com_conciliadora(bucket_name_com_conciliadora):
 
 # PENDIENTE
 
-def send_password_reset_email(email, temp_password):
+def send_new_password_email(email, new_password):
 
     subject = 'Restablecimiento de contraseña'
     message = f'Haga clic en el siguiente enlace para restablecer su contraseña: {reset_link}'
     send_email(email, subject, message)
 
 # PENDIENTE
-def request_password_reset(email):
+
+def reset_password(email):
     conn = get_connection()
     if conn is None:
-        return
+        return False
 
     c = conn.cursor()
-
     try:
         c.execute('SELECT id FROM users WHERE email = %s', (email,))
         user = c.fetchone()
         if user:
-            token = secrets.token_urlsafe(16)  # Generar un token seguro
-            c.execute('INSERT INTO password_resets (user_id, token) VALUES (%s, %s)', (user[0], token))
+            new_password = secrets.token_urlsafe(8)  # Generar una nueva contraseña aleatoria
+            c.execute('UPDATE users SET password = %s WHERE id = %s', (new_password, user[0]))
             conn.commit()
-            reset_link = f"https://plataformacomision.streamlit.app/reset_password?token={token}"  # Cambia a tu URL de producción
-            send_password_reset_email(email, reset_link)
-            return True
-        else:
-            return False
-    except Exception as e:
-        st.error(f'Error al solicitar restablecimiento de contraseña: {e}')
-    finally:
-        c.close()
-        conn.close()
-
-query_params_str = st_javascript("""
-    (function() {
-        function getQueryParams() {
-            let params = {};
-            let queryString = window.location.search.substring(1);
-            let regex = /([^&=]+)=([^&]*)/g;
-            let match;
-            while (match = regex.exec(queryString)) {
-                params[decodeURIComponent(match[1])] = decodeURIComponent(match[2]);
-            }
-            return params;
-        }
-        const params = getQueryParams();
-        return JSON.stringify(params);
-    })();
-""")
-
-if query_params_str:
-    import json
-    query_params = json.loads(query_params_str)
-else:
-    query_params = {}
-
-token = query_params.get('token')
-
-def request_password_reset_interface():
-    st.header('Solicitar Restablecimiento de Contraseña')
-    email = st.text_input('Correo Electrónico')
-
-    if st.button('Solicitar Restablecimiento'):
-        if request_password_reset(email):
-            st.success('Se ha enviado un correo con las instrucciones para restablecer tu contraseña.')
-        else:
-            st.error('El correo electrónico no se encuentra registrado.')
-
-def reset_password(token, new_password):
-    conn = get_connection()
-    if conn is None:
-        return
-
-    c = conn.cursor()
-    
-    try:
-        c.execute('SELECT user_id FROM password_resets WHERE token = %s', (token,))
-        reset_request = c.fetchone()
-        if reset_request:
-            user_id = reset_request[0]
-            c.execute('UPDATE users SET password = %s WHERE id = %s', (new_password, user_id))
-            c.execute('DELETE FROM password_resets WHERE token = %s', (token,))
-            conn.commit()
+            send_new_password_email(email, new_password)
             return True
         else:
             return False
     except Exception as e:
         st.error(f'Error al restablecer la contraseña: {e}')
+        return False
     finally:
         c.close()
         conn.close()
-
-def reset_password_interface():
-    st.header("Restablecer Contraseña")
-    new_password = st.text_input("Nueva Contraseña", type="password")
-    confirm_password = st.text_input("Confirmar Nueva Contraseña", type="password")
-
-    if st.button("Restablecer Contraseña"):
-        if new_password == confirm_password:
-            st.success("Tu contraseña ha sido restablecida con éxito.")
-        else:
-            st.error("Las contraseñas no coinciden.")
-
 
 def login(email, password):
     conn = get_connection()
@@ -1554,7 +1483,7 @@ def login_interface():
     if st.button('Iniciar Sesión'):
         if login(email, password):
             st.success('Inicio de sesión exitoso.')
-            st.experimental_rerun()  # Recarga la página para mostrar la interfaz de cambio de contraseña
+            st.rerun()  # Recarga la página para mostrar la interfaz de cambio de contraseña
         else:
             st.error('Correo electrónico o contraseña incorrectos.')
 # Inicio de la aplicación
@@ -1591,17 +1520,11 @@ st.markdown("""
 
 def main():
 
-    if token:
-        reset_password_interface()
-
-    elif 'user_id_com_arbitral' in st.session_state:
+    if 'user_id_com_arbitral' in st.session_state:
         main_interface_com_arbitral()
 
     elif 'user_id_com_conciliadora' in st.session_state:
         main_interface_com_conciliadora()
-
-    elif 'user_id' in st.session_state:
-        reset_password_interface()
 
     else:
         st.markdown("**SELECCIONA UNA PLATAFORMA:**")
@@ -1621,7 +1544,7 @@ def main():
 
             if st.button("Solicitar restablecimiento de contraseña"):
                 reset_email = st.text_input("Correo electrónico para recuperación", key="reset_email_conciliadora")
-                if request_password_reset(reset_email):
+                if reset_password(reset_email):
                     st.success("Correo de restablecimiento enviado")
                 else:
                     st.error("Correo no encontrado")
@@ -1640,7 +1563,7 @@ def main():
             if st.button("Recuperar contraseña"):
                 reset_email = st.text_input("Correo electrónico para recuperación")
                 if st.button("Solicitar restablecimiento de contraseña"):
-                    if request_password_reset(reset_email):
+                    if reset_password(reset_email):
                         st.success("Correo de restablecimiento enviado")
                     else:
                         st.error("Correo no encontrado")        
