@@ -1530,7 +1530,7 @@ chatbot_html = f"""
 <style>
 .chat-button {{
     position: fixed;
-    bottom: 70px;
+    bottom: 10px;
     right: 30px;
     background-color: #00236F;
     color: white;
@@ -1610,7 +1610,6 @@ chatbot_html = f"""
         <div id="chat-response"></div>
     </div>
     <div class="chat-footer">
-        <input type="text" id="chat-input" placeholder="Escribe tu mensaje...">
         <button id="send-button">Enviar</button>
     </div>
 </div>
