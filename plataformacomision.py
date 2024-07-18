@@ -1498,7 +1498,6 @@ st.markdown(
     }
     </style>
     <div class="app-header">Sistema electrónico de resolución de conflictos</div>
-     <button class="chat-button" id="chat-button">👨‍⚖️</button>
     """,
     unsafe_allow_html=True
 )
