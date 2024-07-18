@@ -1516,6 +1516,22 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
+qa_dict = {
+    "¿Cómo puedo restablecer mi contraseña?": "Para restablecer tu contraseña, haz clic en 'Solicitar restablecimiento de contraseña' y se te enviará la nueva contraseña.",
+    "¿Con quién me puedo contactar si tengo problemas con la plataforma?": "Puedes contactarnos a los correos electrónicos ccampbell@vfcabogados.cl y plataformacomision@outlook.com.",
+    "¿Por qué no puedo ver el escrito que subí hace unos minutos?": "Los escritos sólo serán visibles por las partes una vez que hayan sido proveídos por la Comisión o el Tribunal."
+    "¿Cuál es el peso máximo de los archivos que puedo subir por la plataforma?": "El peso máximo es 200 megabytes.",
+    "¿Qué pasa si en un escrito acompaño varios documentos?": "Al hacer clic en 'Subir nuevo archivo' te aparecera un recuadro que dice 'Selecciona un archivo (incluyendo adjuntos)'. Al hacer clic en 'Browse file' puedes seleccionar múltiples archivos, pero es importante que el escrito principal sea el primero que selecciones o subas."
+}
+
+# Función para el chatbot
+def chatbot_interface():
+    st.header("Chatbot")
+    question = st.selectbox("Selecciona una pregunta", list(qa_dict.keys()))
+    if st.button("Enviar"):
+        response = qa_dict.get(question, "Lo siento, no tengo una respuesta para esa pregunta.")
+        st.write("Bot:", response)
+
 def main():
 
     if 'user_id_com_arbitral' in st.session_state:
@@ -1554,6 +1570,9 @@ def main():
                         st.session_state.show_reset = False
                     else:
                         st.error("Correo no encontrado")
+                        
+            st.markdown("---")
+            chatbot_interface()
 
         elif auth_option == "Plataforma Comisión Arbitral":
             username = st.text_input("Usuario (Plataforma Comisión Arbitral)")
@@ -1581,6 +1600,9 @@ def main():
                     else:
                         st.error("Correo no encontrado")
 
+            st.markdown("---")
+            chatbot_interface()
+    
 
 if __name__ == "__main__":
     main()
