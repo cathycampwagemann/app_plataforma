@@ -1422,7 +1422,7 @@ def get_causa_info_com_conciliadora(bucket_name_com_conciliadora):
 def send_new_password_email(email, new_password):
 
     subject = 'Restablecimiento de contraseña'
-    message = f'Haga clic en el siguiente enlace para restablecer su contraseña: {reset_link}'
+    message = f'Haga clic en el siguiente enlace para restablecer su contraseña: {new_password}'
     send_email(email, subject, message)
 
 # PENDIENTE
