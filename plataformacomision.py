@@ -1597,7 +1597,7 @@ chatbot_html = f"""
 
 <div class="chat-window" id="chat-window">
     <div class="chat-header">
-        {ComisiónBot}
+        ComisiónBot
         <button class="close-button" id="close-button">&times;</button>
     </div>
     <div class="chat-content">
