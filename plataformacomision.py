@@ -1641,7 +1641,6 @@ document.getElementById("send-button").onclick = function() {
     document.getElementById("chat-response").innerText = "Comisión Bot: " + response;
 }
 </script>
-"""
 
 def main():
 
