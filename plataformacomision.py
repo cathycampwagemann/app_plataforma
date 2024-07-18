@@ -1615,13 +1615,13 @@ chatbot_html = f"""
 </div>
 
 <script>
-document.getElementById("chat-button").onclick = function() {{
+document.getElementById("chat-button").onclick = function() {
     document.getElementById("chat-window").style.display = "block";
-}}
+}
 
-document.getElementById("close-button").onclick = function() {{
+document.getElementById("close-button").onclick = function() {
     document.getElementById("chat-window").style.display = "none";
-}}
+}
 
 document.getElementById("question-select").onchange = function() {
     document.getElementById("chat-response").innerText = "";
