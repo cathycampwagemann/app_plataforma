@@ -1571,7 +1571,7 @@ st.markdown("""
 
 def main():
 
-    query_params = st.query_params()
+    query_params = st.experimental_get_query_params()
     token = query_params.get('token', [None])[0]
 
     if token:
