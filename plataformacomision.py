@@ -198,7 +198,7 @@ def main_interface_com_arbitral():
     st.sidebar.selectbox("SELECCIONA UNA CAUSA", buckets_ca, key="buckets_menu_ca")
     st.sidebar.button("Cerrar sesión", on_click=lambda: st.session_state.clear())
     with st.sidebar:
-        st.write("\n" * 20)
+        st.write("\n" * 100)
         st.markdown(
             """
             <style>
