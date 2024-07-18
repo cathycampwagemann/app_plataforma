@@ -1524,14 +1524,15 @@ qa_dict = {
     "¿Qué pasa si en un escrito acompaño varios documentos?": "Al hacer clic en 'Subir nuevo archivo' te aparecera un recuadro que dice 'Selecciona un archivo (incluyendo adjuntos)'. Al hacer clic en 'Browse file' puedes seleccionar múltiples archivos, pero es importante que el escrito principal sea el primero que selecciones o subas."
 }
 
+chatbot_name = "ComisiónBot"
 # Función para el chatbot
 chatbot_html = f"""
 <style>
 .chat-button {{
     position: fixed;
-    bottom: 30px;
+    bottom: 70px;
     right: 30px;
-    background-color: #0084ff;
+    background-color: #00236F;
     color: white;
     border: none;
     border-radius: 50%;
@@ -1543,7 +1544,7 @@ chatbot_html = f"""
 .chat-window {{
     display: none;
     position: fixed;
-    bottom: 90px;
+    bottom: 130px;
     right: 30px;
     width: 300px;
     max-height: 400px;
@@ -1555,7 +1556,7 @@ chatbot_html = f"""
 }}
 
 .chat-header {{
-    background-color: #0084ff;
+    background-color: #00236F;
     color: white;
     padding: 10px;
     border-radius: 10px 10px 0 0;
@@ -1592,7 +1593,7 @@ chatbot_html = f"""
 }}
 </style>
 
-<button class="chat-button" id="chat-button">💬</button>
+<button class="chat-button" id="chat-button">?</button>
 
 <div class="chat-window" id="chat-window">
     <div class="chat-header">
@@ -1608,7 +1609,6 @@ chatbot_html = f"""
         <div id="chat-response"></div>
     </div>
     <div class="chat-footer">
-        <input type="text" id="chat-input" placeholder="Escribe tu mensaje...">
         <button id="send-button">Enviar</button>
     </div>
 </div>
@@ -1630,7 +1630,7 @@ document.getElementById("send-button").onclick = function() {{
         default:
             response = "Lo siento, no tengo una respuesta para esa pregunta.";
     }}
-    document.getElementById("chat-response").innerText = "ComisionBot: " + response;
+    document.getElementById("chat-response").innerText = "ComisiónBot: " + response;
 }}
 </script>
 """
