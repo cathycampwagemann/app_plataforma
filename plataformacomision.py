@@ -1558,12 +1558,10 @@ st.markdown(
     """
     <style>
     .app-footer {
-        background-color: #00236F;
         padding: 10px;
         text-align: center;
         font-size: 16px;
-        color: white;
-        position: fixed;
+        color: black;
         bottom: 0;
         width: 100%;
     }
