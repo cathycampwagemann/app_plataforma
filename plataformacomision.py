@@ -1526,7 +1526,7 @@ qa_dict = {
 
 chatbot_name = "Comisión Bot"
 # Función para el chatbot
-chatbot_html = f"""
+chatbot_html = f""
 <style>
 .chat-button {{
     position: fixed;
