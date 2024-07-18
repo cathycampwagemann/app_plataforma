@@ -1529,8 +1529,8 @@ chatbot_name = "Comisión Bot"
 chatbot_html = f"""
 <style>
 .chat-button {{
-    position: absolute;
-    bottom: 10px;
+    position: fixed;
+    bottom: 100px;
     right: 30px;
     background-color: #00236F;
     color: white;
