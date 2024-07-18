@@ -1556,8 +1556,17 @@ st.markdown("""
 
 login_interface()
 
+st.write("\n\n")
+
 # Nota al final indicando el desarrollador
-st.write("Desarrollada por CHCW")
+st.markdown(
+    """
+    <div style='text-align: center; margin-top: 50px;'>
+        Desarrollada por CHCW
+    </div>
+    """,
+    unsafe_allow_html=True
+)
 
 def main():
 
