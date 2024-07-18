@@ -197,6 +197,23 @@ def main_interface_com_arbitral():
     st.title("Selecciona una causa")
     st.sidebar.selectbox("SELECCIONA UNA CAUSA", buckets_ca, key="buckets_menu_ca")
     st.sidebar.button("Cerrar sesión", on_click=lambda: st.session_state.clear())
+    st.markdown(
+        """
+        <style>
+        .sidebar-footer {
+            padding: 10px;
+            text-align: center;
+            font-size: 16px;
+            color: black;
+            position: relative;
+            bottom: 0;
+            width: 100%;
+        }
+        </style>
+        <div class="sidebar-footer">Desarrollado por CHCW</div>
+        """,
+        unsafe_allow_html=True
+    )
 
     if buckets_ca:
     
