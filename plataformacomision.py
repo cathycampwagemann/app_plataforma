@@ -1519,18 +1519,121 @@ st.markdown("""
 qa_dict = {
     "¿Cómo puedo restablecer mi contraseña?": "Para restablecer tu contraseña, haz clic en 'Solicitar restablecimiento de contraseña' y se te enviará la nueva contraseña.",
     "¿Con quién me puedo contactar si tengo problemas con la plataforma?": "Puedes contactarnos a los correos electrónicos ccampbell@vfcabogados.cl y plataformacomision@outlook.com.",
-    "¿Por qué no puedo ver el escrito que subí hace unos minutos?": "Los escritos sólo serán visibles por las partes una vez que hayan sido proveídos por la Comisión o el Tribunal.",
+    "¿Por qué no puedo ver el escrito que subí hace unos minutos?": "Los escritos sólo serán visibles por las partes una vez que hayan sido proveídos por la Comisión o el Tribunal."
     "¿Cuál es el peso máximo de los archivos que puedo subir por la plataforma?": "El peso máximo es 200 megabytes.",
     "¿Qué pasa si en un escrito acompaño varios documentos?": "Al hacer clic en 'Subir nuevo archivo' te aparecera un recuadro que dice 'Selecciona un archivo (incluyendo adjuntos)'. Al hacer clic en 'Browse file' puedes seleccionar múltiples archivos, pero es importante que el escrito principal sea el primero que selecciones o subas."
 }
 
 # Función para el chatbot
-def chatbot_interface():
-    st.header("Chatbot")
-    question = st.selectbox("Selecciona una pregunta", list(qa_dict.keys()))
-    if st.button("Enviar"):
-        response = qa_dict.get(question, "Lo siento, no tengo una respuesta para esa pregunta.")
-        st.write("Bot:", response)
+chatbot_html = f"""
+<style>
+.chat-button {{
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background-color: #0084ff;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    padding: 15px;
+    cursor: pointer;
+    font-size: 20px;
+}}
+
+.chat-window {{
+    display: none;
+    position: fixed;
+    bottom: 90px;
+    right: 30px;
+    width: 300px;
+    max-height: 400px;
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+}}
+
+.chat-header {{
+    background-color: #0084ff;
+    color: white;
+    padding: 10px;
+    border-radius: 10px 10px 0 0;
+    text-align: center;
+}}
+
+.chat-content {{
+    padding: 10px;
+    max-height: 300px;
+    overflow-y: auto;
+}}
+
+.chat-footer {{
+    padding: 10px;
+    border-top: 1px solid #ccc;
+}}
+
+.chat-footer input {{
+    width: calc(100% - 22px);
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}}
+
+.close-button {{
+    position: absolute;
+    top: 5px;
+    right: 10px;
+    background-color: transparent;
+    border: none;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+}}
+</style>
+
+<button class="chat-button" id="chat-button">💬</button>
+
+<div class="chat-window" id="chat-window">
+    <div class="chat-header">
+        Chatbot
+        <button class="close-button" id="close-button">&times;</button>
+    </div>
+    <div class="chat-content">
+        <p>Selecciona una pregunta:</p>
+        <select id="question-select">
+            <option value="">--Selecciona una pregunta--</option>
+            {"".join([f'<option value="{q}">{q}</option>' for q in qa_dict.keys()])}
+        </select>
+        <div id="chat-response"></div>
+    </div>
+    <div class="chat-footer">
+        <input type="text" id="chat-input" placeholder="Escribe tu mensaje...">
+        <button id="send-button">Enviar</button>
+    </div>
+</div>
+
+<script>
+document.getElementById("chat-button").onclick = function() {{
+    document.getElementById("chat-window").style.display = "block";
+}}
+
+document.getElementById("close-button").onclick = function() {{
+    document.getElementById("chat-window").style.display = "none";
+}}
+
+document.getElementById("send-button").onclick = function() {{
+    var question = document.getElementById("question-select").value;
+    var response = "";
+    switch (question) {{
+        {''.join([f'case "{q}": response = "{a}"; break;' for q, a in qa_dict.items()])}
+        default:
+            response = "Lo siento, no tengo una respuesta para esa pregunta.";
+    }}
+    document.getElementById("chat-response").innerText = "ComisionBot: " + response;
+}}
+</script>
+"""
 
 def main():
 
@@ -1570,9 +1673,6 @@ def main():
                         st.session_state.show_reset = False
                     else:
                         st.error("Correo no encontrado")
-                        
-            st.markdown("---")
-            chatbot_interface()
 
         elif auth_option == "Plataforma Comisión Arbitral":
             username = st.text_input("Usuario (Plataforma Comisión Arbitral)")
@@ -1599,9 +1699,8 @@ def main():
                         st.session_state.show_reset = False
                     else:
                         st.error("Correo no encontrado")
-
-            st.markdown("---")
-            chatbot_interface()
+                        
+    html(chatbot_html, height=600)
     
 
 if __name__ == "__main__":
