@@ -1593,11 +1593,11 @@ chatbot_html = f"""
 }}
 </style>
 
-<button class="chat-button" id="chat-button">?</button>
+<button class="chat-button" id="chat-button">🤖</button>
 
 <div class="chat-window" id="chat-window">
     <div class="chat-header">
-        Chatbot
+        {ComisiónBot}
         <button class="close-button" id="close-button">&times;</button>
     </div>
     <div class="chat-content">
