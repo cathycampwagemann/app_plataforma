@@ -1519,7 +1519,7 @@ st.markdown("""
 qa_dict = {
     "¿Cómo puedo restablecer mi contraseña?": "Para restablecer tu contraseña, haz clic en 'Solicitar restablecimiento de contraseña' y se te enviará la nueva contraseña.",
     "¿Con quién me puedo contactar si tengo problemas con la plataforma?": "Puedes contactarnos a los correos electrónicos ccampbell@vfcabogados.cl y plataformacomision@outlook.com.",
-    "¿Por qué no puedo ver el escrito que subí hace unos minutos?": "Los escritos sólo serán visibles por las partes una vez que hayan sido proveídos por la Comisión o el Tribunal."
+    "¿Por qué no puedo ver el escrito que subí hace unos minutos?": "Los escritos sólo serán visibles por las partes una vez que hayan sido proveídos por la Comisión o el Tribunal.",
     "¿Cuál es el peso máximo de los archivos que puedo subir por la plataforma?": "El peso máximo es 200 megabytes.",
     "¿Qué pasa si en un escrito acompaño varios documentos?": "Al hacer clic en 'Subir nuevo archivo' te aparecera un recuadro que dice 'Selecciona un archivo (incluyendo adjuntos)'. Al hacer clic en 'Browse file' puedes seleccionar múltiples archivos, pero es importante que el escrito principal sea el primero que selecciones o subas."
 }
