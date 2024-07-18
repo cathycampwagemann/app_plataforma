@@ -1526,7 +1526,7 @@ qa_dict = {
 
 chatbot_name = "Comisión Bot"
 # Función para el chatbot
-chatbot_html = f""
+chatbot_html = f"""
 <style>
 .chat-button {{
     position: fixed;
@@ -1615,19 +1615,19 @@ chatbot_html = f""
 </div>
 
 <script>
-document.getElementById("chat-button").onclick = function() {
+document.getElementById("chat-button").onclick = function() {{
     document.getElementById("chat-window").style.display = "block";
-}
+}}
 
-document.getElementById("close-button").onclick = function() {
+document.getElementById("close-button").onclick = function() {{
     document.getElementById("chat-window").style.display = "none";
-}
+}}
 
-document.getElementById("question-select").onchange = function() {
+document.getElementById("question-select").onchange = function() {{
     document.getElementById("chat-response").innerText = "";
-}
+}}
 
-document.getElementById("send-button").onclick = function() {
+document.getElementById("send-button").onclick = function() {{
     var question = document.getElementById("question-select").value;
     var response = "";
     switch (question) {
@@ -1637,11 +1637,11 @@ document.getElementById("send-button").onclick = function() {
         case "¿Cuál es el peso máximo de los archivos que puedo subir por la plataforma?": response = "El peso máximo es 200 megabytes."; break;
         case "¿Qué pasa si en un escrito acompaño varios documentos?": response = "Al hacer clic en 'Subir nuevo archivo' te aparecerá un recuadro que dice 'Selecciona un archivo (incluyendo adjuntos)'. Al hacer clic en 'Browse file' puedes seleccionar múltiples archivos, pero es importante que el escrito principal sea el primero que selecciones o subas."; break;
         default: response = "Lo siento, no tengo una respuesta para esa pregunta.";
-    }
+    }}
     document.getElementById("chat-response").innerText = "Comisión Bot: " + response;
-}
+}}
 </script>
-
+"""
 def main():
 
     if 'user_id_com_arbitral' in st.session_state:
