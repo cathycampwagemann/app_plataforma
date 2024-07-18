@@ -1700,7 +1700,7 @@ def main():
                     else:
                         st.error("Correo no encontrado")
                         
-    html(chatbot_html, height=600)
+    components.html(chatbot_html, height=600)
     
 
 if __name__ == "__main__":
