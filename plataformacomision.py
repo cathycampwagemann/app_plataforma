@@ -1561,6 +1561,7 @@ st.markdown(
         padding: 10px;
         text-align: center;
         font-size: 16px;
+        position: fixed;
         color: black;
         bottom: 0;
         width: 100%;
