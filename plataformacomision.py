@@ -1540,12 +1540,20 @@ def main():
                     else:
                         st.error("Usuario o contraseña incorrectos en plataforma de Comisión Conciliadora")
 
+            if "show_reset" not in st.session_state:
+                st.session_state.show_reset = False
+    
             if st.button("Solicitar restablecimiento de contraseña"):
+                st.session_state.show_reset = True
+    
+            if st.session_state.show_reset:
                 reset_email = st.text_input("Correo electrónico para recuperación", key="reset_email_conciliadora")
-                if reset_password(reset_email):
-                    st.success("Correo de restablecimiento enviado")
-                else:
-                    st.error("Correo no encontrado")
+                if st.button("Confirmar restablecimiento"):
+                    if reset_password(reset_email):
+                        st.success("Se ha enviado un correo con tu nueva contraseña.")
+                        st.session_state.show_reset = False
+                    else:
+                        st.error("Correo no encontrado")
 
         elif auth_option == "Plataforma Comisión Arbitral":
             username = st.text_input("Usuario (Plataforma Comisión Arbitral)")
@@ -1558,13 +1566,20 @@ def main():
                     else:
                         st.error("Usuario o contraseña incorrectos en plataforma de Comisión Arbitral")
             
-            if st.button("Recuperar contraseña"):
-                reset_email = st.text_input("Correo electrónico para recuperación")
-                if st.button("Solicitar restablecimiento de contraseña"):
+            if "show_reset" not in st.session_state:
+                st.session_state.show_reset = False
+    
+            if st.button("Solicitar restablecimiento de contraseña"):
+                st.session_state.show_reset = True
+    
+            if st.session_state.show_reset:
+                reset_email = st.text_input("Correo electrónico para recuperación", key="reset_email_conciliadora")
+                if st.button("Confirmar restablecimiento"):
                     if reset_password(reset_email):
-                        st.success("Correo de restablecimiento enviado")
+                        st.success("Se ha enviado un correo con tu nueva contraseña.")
+                        st.session_state.show_reset = False
                     else:
-                        st.error("Correo no encontrado")        
+                        st.error("Correo no encontrado")
 
 
 if __name__ == "__main__":
