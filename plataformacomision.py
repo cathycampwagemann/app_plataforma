@@ -1498,6 +1498,7 @@ st.markdown(
     }
     </style>
     <div class="app-header">Sistema electrónico de resolución de conflictos</div>
+     <button class="chat-button" id="chat-button">👨‍⚖️</button>
     """,
     unsafe_allow_html=True
 )
@@ -1529,7 +1530,7 @@ chatbot_name = "Comisión Bot"
 chatbot_html = f"""
 <style>
 .chat-button {{
-    position: fixed;
+    position: absolute;
     bottom: 10px;
     right: 30px;
     background-color: #00236F;
