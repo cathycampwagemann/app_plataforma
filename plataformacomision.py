@@ -1554,25 +1554,24 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-login_interface()
-
-with st.container():
-    st.write("")
-    st.write("Desarrollado por CHCW", unsafe_allow_html=True)
-
-# Espaciador para empujar el mensaje al final de la página
-for _ in range(50):
-    st.write("")
-
-# Reafirmamos que el mensaje quede visible al final
 st.markdown(
     """
-    <div style='text-align: center; margin-top: 50px;'>
-        Desarrollado por CHCW
-    </div>
+    <style>
+    .app-footer {
+        background-color: #00236F;
+        padding: 10px;
+        text-align: center;
+        font-size: 16px;
+        color: white;
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+    }
+    </style>
+    <div class="app-footer">Desarrollado por CHCW</div>
     """,
     unsafe_allow_html=True
-    )
+)
 
 def main():
 
