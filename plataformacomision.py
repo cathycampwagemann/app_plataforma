@@ -1623,6 +1623,10 @@ document.getElementById("close-button").onclick = function() {{
     document.getElementById("chat-window").style.display = "none";
 }}
 
+document.getElementById("question-select").onchange = function() {
+    document.getElementById("chat-response").innerText = "";
+}
+
 document.getElementById("send-button").onclick = function() {
     var question = document.getElementById("question-select").value;
     var response = "";
