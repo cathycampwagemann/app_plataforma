@@ -1440,7 +1440,7 @@ def request_password_reset(email):
             token = secrets.token_urlsafe(16)  # Generar un token seguro
             c.execute('INSERT INTO password_resets (user_id, token) VALUES (%s, %s)', (user[0], token))
             conn.commit()
-            reset_link = f"http://localhost:8501?token={token}"  # Cambia a tu URL de producción
+            reset_link = f"https://plataformacomision.streamlit.app/reset_password?token={token}"  # Cambia a tu URL de producción
             send_password_reset_email(email, reset_link)
             return True
         else:
@@ -1450,43 +1450,58 @@ def request_password_reset(email):
     finally:
         c.close()
         conn.close()
+        
+def request_password_reset_interface():
+    st.header('Solicitar Restablecimiento de Contraseña')
+    email = st.text_input('Correo Electrónico')
 
+    if st.button('Solicitar Restablecimiento'):
+        if request_password_reset(email):
+            st.success('Se ha enviado un correo con las instrucciones para restablecer tu contraseña.')
+        else:
+            st.error('El correo electrónico no se encuentra registrado.')
 
-# # PENDIENTE
-def change_password(user_id, new_password):
+def reset_password(token, new_password):
     conn = get_connection()
     if conn is None:
         return
 
     c = conn.cursor()
-
+    
     try:
-        c.execute('UPDATE users SET password = %s WHERE id = %s', (new_password, user_id))
-        conn.commit()
-        st.success('Contraseña actualizada exitosamente.')
+        c.execute('SELECT user_id FROM password_resets WHERE token = %s', (token,))
+        reset_request = c.fetchone()
+        if reset_request:
+            user_id = reset_request[0]
+            c.execute('UPDATE users SET password = %s WHERE id = %s', (new_password, user_id))
+            c.execute('DELETE FROM password_resets WHERE token = %s', (token,))
+            conn.commit()
+            return True
+        else:
+            return False
     except Exception as e:
-        st.error(f'Error al actualizar la contraseña: {e}')
+        st.error(f'Error al restablecer la contraseña: {e}')
     finally:
         c.close()
         conn.close()
 
 def reset_password_interface():
-    st.header('Cambiar Contraseña')
+    token = st.experimental_get_query_params().get('token', [None])[0]
+    if token:
+        st.header('Restablecer Contraseña')
+        new_password = st.text_input('Nueva Contraseña', type='password')
+        confirm_password = st.text_input('Confirmar Nueva Contraseña', type='password')
 
-    user_id = st.session_state.get('user_id')
-    if not user_id:
-        st.error('No se encontró información del usuario. Inicie sesión nuevamente.')
-        return
-
-    new_password = st.text_input('Nueva Contraseña', type='password')
-    confirm_password = st.text_input('Confirmar Nueva Contraseña', type='password')
-
-    if st.button('Cambiar Contraseña'):
-        if new_password != confirm_password:
-            st.error('Las contraseñas no coinciden.')
-        else:
-            if change_password(user_id, new_password):
-                st.success('Contraseña actualizada exitosamente.')
+        if st.button('Restablecer Contraseña'):
+            if new_password == confirm_password:
+                if reset_password(token, new_password):
+                    st.success('Tu contraseña ha sido restablecida con éxito.')
+                else:
+                    st.error('El enlace de restablecimiento no es válido o ha expirado.')
+            else:
+                st.error('Las contraseñas no coinciden.')
+    else:
+        st.error('No se proporcionó un token válido.')
 
 
 def login(email, password):
@@ -1556,7 +1571,13 @@ st.markdown("""
 
 def main():
 
-    if 'user_id_com_arbitral' in st.session_state:
+    query_params = st.query_params()
+    token = query_params.get('token', [None])[0]
+
+    if token:
+        reset_password_interface()
+
+    elif 'user_id_com_arbitral' in st.session_state:
         main_interface_com_arbitral()
 
     elif 'user_id_com_conciliadora' in st.session_state:
