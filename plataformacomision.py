@@ -1561,10 +1561,8 @@ st.markdown(
         padding: 10px;
         text-align: center;
         font-size: 16px;
-        position: fixed;
         color: black;
-        bottom: 0;
-        width: 100%;
+        margin-top: 50px;  /* Espacio antes del pie de página */
     }
     </style>
     <div class="app-footer">Desarrollado por CHCW</div>
