@@ -1475,7 +1475,7 @@ if query_params_str:
     query_params = json.loads(query_params_str)
 else:
     query_params = {}
-    
+
 token = query_params.get('token')
 
 def request_password_reset_interface():
