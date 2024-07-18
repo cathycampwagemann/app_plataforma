@@ -1554,21 +1554,28 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-st.markdown(
-    """
-    <style>
-    .app-footer {
-        padding: 10px;
-        text-align: center;
-        font-size: 16px;
-        color: black;
-        margin-top: 50px;  /* Espacio antes del pie de página */
-    }
-    </style>
-    <div class="app-footer">Desarrollado por CHCW</div>
-    """,
-    unsafe_allow_html=True
-)
+with st.sidebar:
+    # Espacio adicional para empujar el mensaje al final
+    st.write("\n" * 20)
+
+    # Nota al final indicando el desarrollador
+    st.markdown(
+        """
+        <style>
+        .sidebar-footer {
+            padding: 10px;
+            text-align: center;
+            font-size: 16px;
+            color: black;
+            position: relative;
+            bottom: 0;
+            width: 100%;
+        }
+        </style>
+        <div class="sidebar-footer">Desarrollada por CHCW</div>
+        """,
+        unsafe_allow_html=True
+    )
 
 def main():
 
