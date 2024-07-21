@@ -83,21 +83,26 @@ def get_connection():
         return connection_pool.get_connection()
     except mysql.connector.Error as err:
         st.error(f"Error while getting connection from pool: {err}")
-        st.stop()
+        return None
         
 def execute_query(query, params=None):
     conn = get_connection()
-    cursor = conn.cursor()
+    if conn is None:
+        st.error("Failed to obtain database connection.")
+        return None
     try:
+        cursor = conn.cursor()
         cursor.execute(query, params)
         results = cursor.fetchall()
         return results
-    except mysql.connector.Error as err:
-        st.error(f"Error: {err}")
+    except Error as err:
+        st.error(f"Error executing query: {err}")
         return None
     finally:
-        cursor.close()
+        if cursor:
+            cursor.close()
         conn.close()
+
 
 # Verificar el resto de las variables de entorno necesarias (SMTP)
 smtp_server = get_env_variable('SMTP_SERVER')
@@ -107,19 +112,21 @@ from_password = get_env_variable('FROM_PASSWORD')
 
 def authenticate_user(query, username, password):
     conn = get_connection()
-    if conn is None:  
-        st.error("Error de conexión.")
+    if conn is None:
+        st.error("Failed to obtain database connection.")
         return None
     try:
         c = conn.cursor()
         c.execute(query, (username, password))
         user = c.fetchone()
-        c.close()
-        conn.close()
         return user
     except Error as err:
         st.error(f"Error: {err}")
         return None
+    finally:
+        if c:
+            c.close()
+        conn.close()
         
 # Función para crear bucket Comisión arbitral
 def create_bucket_com_arbitral(bucket_name_com_arbitral):
@@ -1685,12 +1692,16 @@ def main():
                 submit_button = st.form_submit_button(label="Iniciar sesión en plataforma de Comisión Conciliadora")
 
             if submit_button:
-                    if authenticate_com_conciliadora(username, password):
-                        st.success("Inicio de sesión exitoso")
-                        st.rerun()
-                    else:
-                        st.error("Usuario o contraseña incorrectos en plataforma de Comisión Conciliadora")
-
+                user = authenticate_com_conciliadora(username, password)
+                if user:
+                    st.session_state['user_id_com_conciliadora'] = user[0]
+                    st.session_state['username'] = username
+                    st.session_state['user_role'] = user[1]
+                    st.success("Inicio de sesión exitoso")
+                    st.rerun()
+            else:
+                st.error("Usuario o contraseña incorrectos en plataforma de Comisión Conciliadora")
+                
             if "show_reset" not in st.session_state:
                 st.session_state.show_reset = False
     
@@ -1716,11 +1727,15 @@ def main():
                 submit_button = st.form_submit_button(label="Iniciar sesión en plataforma de Comisión Arbitral")
 
             if submit_button:
-                    if authenticate_com_arbitral(username, password):
-                        st.success("Inicio de sesión exitoso")
-                        st.rerun()
-                    else:
-                        st.error("Usuario o contraseña incorrectos en plataforma de Comisión Arbitral")
+            user = authenticate_com_arbitral(username, password)
+            if user:
+                st.session_state['user_id_com_arbitral'] = user[0]
+                st.session_state['username'] = username
+                st.session_state['user_role'] = user[1]
+                st.success("Inicio de sesión exitoso")
+                st.experimental_rerun()
+            else:
+                st.error("Usuario o contraseña incorrectos en plataforma de Comisión Arbitral")
             
             if "show_reset" not in st.session_state:
                 st.session_state.show_reset = False
