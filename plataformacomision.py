@@ -1727,15 +1727,15 @@ def main():
                 submit_button = st.form_submit_button(label="Iniciar sesión en plataforma de Comisión Arbitral")
 
             if submit_button:
-            user = authenticate_com_arbitral(username, password)
-            if user:
-                st.session_state['user_id_com_arbitral'] = user[0]
-                st.session_state['username'] = username
-                st.session_state['user_role'] = user[1]
-                st.success("Inicio de sesión exitoso")
-                st.experimental_rerun()
-            else:
-                st.error("Usuario o contraseña incorrectos en plataforma de Comisión Arbitral")
+                user = authenticate_com_arbitral(username, password)
+                if user:
+                    st.session_state['user_id_com_arbitral'] = user[0]
+                    st.session_state['username'] = username
+                    st.session_state['user_role'] = user[1]
+                    st.success("Inicio de sesión exitoso")
+                    st.experimental_rerun()
+                else:
+                    st.error("Usuario o contraseña incorrectos en plataforma de Comisión Arbitral")
             
             if "show_reset" not in st.session_state:
                 st.session_state.show_reset = False
