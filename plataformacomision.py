@@ -1696,7 +1696,7 @@ def main():
             with st.form(key='conciliadora_form'):
                 username = st.text_input("Usuario (Plataforma Comisión Conciliadora)")
                 password = st.text_input("Contraseña (Plataforma Comisión Conciliadora)", type="password")
-                 submit_button = st.form_submit_button(label="Iniciar sesión en plataforma de Comisión Conciliadora")
+                submit_button = st.form_submit_button(label="Iniciar sesión en plataforma de Comisión Conciliadora")
 
             if submit_button:
                     if authenticate_com_conciliadora(username, password):
