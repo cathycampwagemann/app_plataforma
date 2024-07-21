@@ -71,12 +71,13 @@ db_config = {
 # Configuración del pool de conexiones
 try:
     connection_pool = pooling.MySQLConnectionPool(pool_name="mypool",
-                                                  pool_size=5,
+                                                  pool_size=10,
                                                   **db_config)
 except mysql.connector.Error as err:
     st.error(f"Error while creating connection pool: {err}")
     st.stop()
 
+@st.cache_resource
 def get_connection():
     try:
         return connection_pool.get_connection()
@@ -1625,7 +1626,6 @@ chatbot_html = f"""
         <button class="close-button" id="close-button">&times;</button>
     </div>
     <div class="chat-content">
-        <iframe src="https://your-chatbot-url" width="100%" height="100%" style="border: none;"></iframe>
         <p>Selecciona una pregunta:</p>
         <select id="question-select">
             <option value="">--Selecciona una pregunta--</option>
