@@ -115,6 +115,7 @@ def authenticate_user(query, username, password):
     if conn is None:
         st.error("Failed to obtain database connection.")
         return None
+    c = None
     try:
         c = conn.cursor()
         c.execute(query, (username, password))
