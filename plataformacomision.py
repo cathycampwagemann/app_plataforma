@@ -540,11 +540,20 @@ def asignar_nuevos_permisos():
 def upload_file_interface_com_arbitral():
     """Interfaz para subir archivos cuando el modo de subida está activo."""
 
-    conn = get_connection()
-    if conn is None:
-        return
+    st.markdown("""
+        <style>
+        .upload-interface {
+            background-color: #E7F0F9;
+            border: 2px solid #00236F;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        </style>
+        """, unsafe_allow_html=True)
 
-    c = conn.cursor()
+    st.markdown('<div class="upload-interface">', unsafe_allow_html=True)
 
     st.title("Subir archivos")
     uploaded_files = st.file_uploader("Selecciona un archivo (incluyendo adjuntos)", accept_multiple_files=True, key="upload_file_uploader1")
@@ -561,28 +570,36 @@ def upload_file_interface_com_arbitral():
     emisor_doc = st.selectbox("Selecciona el emisor del documento", emisor_options, key="select_emisor")
 
     selected_users = []
-    if emisor_doc == "Tribunal":
-        c.execute('SELECT email FROM users INNER JOIN user_permissions_com_arbitral ON users.id = user_permissions_com_arbitral.user_id_com_arbitral WHERE bucket_name_com_arbitral = %s', (selected_bucket_ca,))
-        users = c.fetchall()
-        user_emails = [user[0] for user in users]
-        selected_users = st.multiselect("Selecciona los usuarios a notificar", user_emails, key="select_users")
 
+    if emisor_doc == "Tribunal":
+        conn = get_connection()
+        if conn:
+            c = conn.cursor()
+            c.execute('SELECT email FROM users INNER JOIN user_permissions_com_arbitral ON users.id = user_permissions_com_arbitral.user_id_com_arbitral WHERE bucket_name_com_arbitral = %s', (selected_bucket_ca,))
+            users = c.fetchall()
+            user_emails = [user[0] for user in users]
+            selected_users = st.multiselect("Selecciona los usuarios a notificar", user_emails, key="select_users")
+            conn.close()
+            
     if st.button("Guardar archivo", key="save_file"):
         if uploaded_files and section and stage and selected_bucket_ca and emisor_doc:
-            save_uploaded_file_com_arbitral(uploaded_files, section, stage, selected_bucket_ca, emisor_doc)
-            st.success("Archivo subido con éxito.")
-            if emisor_doc=="Tribunal":
-                notify_abogados_com_arbitral(selected_users, selected_bucket_ca, uploaded_files[0].name)
-            else:
-                notify_comision_arbitral(selected_bucket_ca, uploaded_files[0].name)
-            # Limpia el modo de subida si necesario
-            if 'upload_mode_com_a' in st.session_state:
-                st.session_state.pop('upload_mode_com_a', None)
+            conn = get_connection()
+            if conn:
+                c = conn.cursor()
+                save_uploaded_file_com_arbitral(uploaded_files, section, stage, selected_bucket_ca, emisor_doc)
+                st.success("Archivo subido con éxito.")
+                if emisor_doc=="Tribunal":
+                    notify_abogados_com_arbitral(selected_users, selected_bucket_ca, uploaded_files[0].name)
+                else:
+                    notify_comision_arbitral(selected_bucket_ca, uploaded_files[0].name)
+                # Limpia el modo de subida si necesario
+                if 'upload_mode_com_a' in st.session_state:
+                    st.session_state.pop('upload_mode_com_a', None)
+                conn.close()
         else:
-            st.error("Por favor, completa todos los campos necesarios para subir el archivo.")
-
-
-    conn.close()
+             st.error("Por favor, completa todos los campos necesarios para subir el archivo.")
+    
+    st.markdown('</div>', unsafe_allow_html=True)
 
 #Función para subir archivos comisión conciliadora
 
@@ -1539,6 +1556,7 @@ chatbot_html = f"""
     padding: 15px;
     cursor: pointer;
     font-size: 20px;
+    z-index: 1000;
 }}
 
 .chat-window {{
@@ -1546,13 +1564,18 @@ chatbot_html = f"""
     position: fixed;
     bottom: 130px;
     right: 30px;
-    width: 300px;
-    max-height: 400px;
+    width: auto;
+    max-width: 90%
+    min-width: 300px
+    max-height: 400px; 
     background-color: white;
     border: 1px solid #ccc;
     border-radius: 10px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     z-index: 1000;
+    padding: 10px;
+    overflow-wrap: break-word;
+    
 }}
 
 .chat-header {{
@@ -1602,6 +1625,7 @@ chatbot_html = f"""
         <button class="close-button" id="close-button">&times;</button>
     </div>
     <div class="chat-content">
+        <iframe src="https://your-chatbot-url" width="100%" height="100%" style="border: none;"></iframe>
         <p>Selecciona una pregunta:</p>
         <select id="question-select">
             <option value="">--Selecciona una pregunta--</option>
@@ -1617,6 +1641,7 @@ chatbot_html = f"""
 <script>
 document.getElementById("chat-button").onclick = function() {{
     document.getElementById("chat-window").style.display = "block";
+    document.getElementById("chat-window").style.width = Math.max(...Array.from(document.getElementById("question-select").options).map(option => option.text.length)) * 8 + "px";
 }}
 
 document.getElementById("close-button").onclick = function() {{
@@ -1668,10 +1693,12 @@ def main():
         auth_option = st.radio("_", ("Plataforma Comisión Conciliadora", "Plataforma Comisión Arbitral"))
 
         if auth_option == "Plataforma Comisión Conciliadora":
-            username = st.text_input("Usuario (Plataforma Comisión Conciliadora)")
-            password = st.text_input("Contraseña (Plataforma Comisión Conciliadora)", type="password")
+            with st.form(key='conciliadora_form'):
+                username = st.text_input("Usuario (Plataforma Comisión Conciliadora)")
+                password = st.text_input("Contraseña (Plataforma Comisión Conciliadora)", type="password")
+                 submit_button = st.form_submit_button(label="Iniciar sesión en plataforma de Comisión Conciliadora")
 
-            if st.button("Iniciar sesión en plataforma de Comisión Conciliadora"):
+            if submit_button:
                     if authenticate_com_conciliadora(username, password):
                         st.success("Inicio de sesión exitoso")
                         st.rerun()
@@ -1685,8 +1712,11 @@ def main():
                 st.session_state.show_reset = True
     
             if st.session_state.show_reset:
-                reset_email = st.text_input("Correo electrónico para recuperación", key="reset_email_conciliadora")
-                if st.button("Confirmar restablecimiento"):
+                with st.form(key='reset_form_conciliadora'):
+                    reset_email = st.text_input("Correo electrónico para recuperación", key="reset_email_conciliadora")
+                    reset_submit_button = st.form_submit_button(label="Confirmar restablecimiento")
+               
+                if reset_submit_button:
                     if reset_password(reset_email):
                         st.success("Se ha enviado un correo con tu nueva contraseña.")
                         st.session_state.show_reset = False
@@ -1694,10 +1724,12 @@ def main():
                         st.error("Correo no encontrado")
 
         elif auth_option == "Plataforma Comisión Arbitral":
-            username = st.text_input("Usuario (Plataforma Comisión Arbitral)")
-            password = st.text_input("Contraseña (Plataforma Comisión Arbitral)", type="password")
+            with st.form(key='arbitral_form'):
+                username = st.text_input("Usuario (Plataforma Comisión Arbitral)")
+                password = st.text_input("Contraseña (Plataforma Comisión Arbitral)", type="password")
+                submit_button = st.form_submit_button(label="Iniciar sesión en plataforma de Comisión Arbitral")
 
-            if st.button("Iniciar sesión en plataforma de Comisión Arbitral"):
+            if submit_button:
                     if authenticate_com_arbitral(username, password):
                         st.success("Inicio de sesión exitoso")
                         st.rerun()
@@ -1711,15 +1743,18 @@ def main():
                 st.session_state.show_reset = True
     
             if st.session_state.show_reset:
-                reset_email = st.text_input("Correo electrónico para recuperación", key="reset_email_conciliadora")
-                if st.button("Confirmar restablecimiento"):
+                with st.form(key='reset_form_arbitral'):
+                    reset_email = st.text_input("Correo electrónico para recuperación", key="reset_email_conciliadora")
+                    reset_submit_button = st.form_submit_button(label="Confirmar restablecimiento")
+        
+                if reset_submit_button:
                     if reset_password(reset_email):
                         st.success("Se ha enviado un correo con tu nueva contraseña.")
                         st.session_state.show_reset = False
                     else:
                         st.error("Correo no encontrado")
                         
-    components.html(chatbot_html, height=600)
+    components.html(chatbot_html, height=800)
     
 
 if __name__ == "__main__":
