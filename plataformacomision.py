@@ -71,9 +71,9 @@ db_config = {
 # Configuración del pool de conexiones
 try:
     connection_pool = pooling.MySQLConnectionPool(pool_name="mypool",
-                                                  pool_size=15,
+                                                  pool_size=20,
                                                   **db_config)
-except mysql.connector.Error as err:
+except Error as err:
     st.error(f"Error while creating connection pool: {err}")
     st.stop()
 
@@ -81,7 +81,7 @@ except mysql.connector.Error as err:
 def get_connection():
     try:
         return connection_pool.get_connection()
-    except mysql.connector.Error as err:
+    except Error as err:
         st.error(f"Error while getting connection from pool: {err}")
         return None
         
@@ -90,6 +90,7 @@ def execute_query(query, params=None):
     if conn is None:
         st.error("Failed to obtain database connection.")
         return None
+    cursor = None
     try:
         cursor = conn.cursor()
         cursor.execute(query, params)
@@ -127,7 +128,8 @@ def authenticate_user(query, username, password):
     finally:
         if c:
             c.close()
-        conn.close()
+        if conn:
+            conn.close()
         
 # Función para crear bucket Comisión arbitral
 def create_bucket_com_arbitral(bucket_name_com_arbitral):
