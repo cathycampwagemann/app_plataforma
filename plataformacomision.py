@@ -117,6 +117,9 @@ def authenticate_user(query, username, password):
         c.close()
         conn.close()
         return user
+    except Error as err:
+        st.error(f"Error: {err}")
+        return None
         
 # Función para crear bucket Comisión arbitral
 def create_bucket_com_arbitral(bucket_name_com_arbitral):
