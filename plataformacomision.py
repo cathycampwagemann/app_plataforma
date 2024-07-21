@@ -71,7 +71,7 @@ db_config = {
 # Configuración del pool de conexiones
 try:
     connection_pool = pooling.MySQLConnectionPool(pool_name="mypool",
-                                                  pool_size=10,
+                                                  pool_size=15,
                                                   **db_config)
 except mysql.connector.Error as err:
     st.error(f"Error while creating connection pool: {err}")
@@ -101,8 +101,8 @@ def execute_query(query, params=None):
     finally:
         if cursor:
             cursor.close()
-        conn.close()
-
+        if conn:
+            conn.close()
 
 # Verificar el resto de las variables de entorno necesarias (SMTP)
 smtp_server = get_env_variable('SMTP_SERVER')
