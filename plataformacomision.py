@@ -104,6 +104,19 @@ smtp_server = get_env_variable('SMTP_SERVER')
 smtp_port = int(get_env_variable('SMTP_PORT'))
 from_email = get_env_variable('FROM_EMAIL')
 from_password = get_env_variable('FROM_PASSWORD')
+
+def authenticate_user(query, username, password):
+    conn = get_connection()
+    if conn is None:  
+        st.error("Error de conexión.")
+        return None
+    try:
+        c = conn.cursor()
+        c.execute(query, (username, password))
+        user = c.fetchone()
+        c.close()
+        conn.close()
+        return user
         
 # Función para crear bucket Comisión arbitral
 def create_bucket_com_arbitral(bucket_name_com_arbitral):
@@ -140,53 +153,23 @@ def create_bucket_com_conciliadora(bucket_name_com_conciliadora):
 
 # Función para autenticar comisión arbitral y conciliadora
 def authenticate_com_conciliadora(username, password):
-    conn = get_connection()
-    if conn is None:
-        return False
-
-    c = conn.cursor()
-
-    try:
-        # Usar %s como marcador de posición para los parámetros en MySQL
-        c.execute('SELECT id, role FROM users WHERE username = %s AND password = %s', (username, password))
-        user = c.fetchone()
-        if user:
-            st.session_state['user_id_com_conciliadora'] = user[0]
-            st.session_state['username'] = username
-            st.session_state['user_role'] = user[1]
-            return True
-        return False
-    except mysql.connector.Error as err:
-        st.error(f"Error: {err}")
-        return False
-    finally:
-        c.close()
-        conn.close()
+    query = '''
+    SELECT u.id, u.role
+    FROM users u
+    JOIN user_permissions p ON u.id = p.user_id
+    WHERE u.username = %s AND u.password = %s AND p.permission = 'com_conciliadora'
+    '''
+    return authenticate_user(query, username, password)
 
 # Función para autenticar comisión arbitral
 def authenticate_com_arbitral(username, password):
-    conn = get_connection()
-    if conn is None:
-        return False
-
-    c = conn.cursor()
-
-    try:
-        # Usar %s como marcador de posición para los parámetros en MySQL
-        c.execute('SELECT id, role FROM users WHERE username = %s AND password = %s', (username, password))
-        user = c.fetchone()
-        if user:
-            st.session_state['user_id_com_arbitral'] = user[0]
-            st.session_state['username'] = username
-            st.session_state['user_role'] = user[1]
-            return True
-        return False
-    except mysql.connector.Error as err:
-        st.error(f"Error: {err}")
-        return False
-    finally:
-        c.close()
-        conn.close()
+    query = '''
+    SELECT u.id, u.role
+    FROM users u
+    JOIN user_permissions p ON u.id = p.user_id
+    WHERE u.username = %s AND u.password = %s AND p.permission = 'com_arbitral'
+    '''
+    return authenticate_user(query, username, password)
         
 # Interfaz principal comisión arbitral
 
