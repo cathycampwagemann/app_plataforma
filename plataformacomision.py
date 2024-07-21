@@ -166,7 +166,7 @@ def authenticate_com_conciliadora(username, password):
     query = '''
     SELECT u.id, u.role
     FROM users u
-    JOIN user_permissions p ON u.id = p.user_id
+    JOIN user_permissions_com_conciliadora p ON u.id = p.user_id
     WHERE u.username = %s AND u.password = %s AND p.permission = 'com_conciliadora'
     '''
     return authenticate_user(query, username, password)
@@ -176,7 +176,7 @@ def authenticate_com_arbitral(username, password):
     query = '''
     SELECT u.id, u.role
     FROM users u
-    JOIN user_permissions p ON u.id = p.user_id
+    JOIN user_permissions_com_arbitral p ON u.id = p.user_id
     WHERE u.username = %s AND u.password = %s AND p.permission = 'com_arbitral'
     '''
     return authenticate_user(query, username, password)
