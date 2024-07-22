@@ -6,3 +6,4 @@ python-dotenv==1.0.1
 pytz==2024.1
 tzdata==2024.1
 PyMuPDF==1.21.1
+streamlit==1.20.0
