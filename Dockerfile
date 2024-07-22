@@ -14,5 +14,7 @@ COPY . .
 # Exponer el puerto en el que Streamlit se ejecutará
 EXPOSE 8080
 
+ENV STREAMLIT_SERVER_PORT=8080
+
 # Comando para ejecutar la aplicación
-CMD ["streamlit", "run", "plataformacomision.py", "--server.port=8080", "--server.address=0.0.0.0"]
+CMD ["streamlit", "run", "plataformacomision6.py"]
