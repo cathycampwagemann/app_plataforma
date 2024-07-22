@@ -17,4 +17,4 @@ EXPOSE 8080
 ENV STREAMLIT_SERVER_PORT=8080
 
 # Comando para ejecutar la aplicación
-CMD ["streamlit", "run", "plataformacomision6.py"]
+CMD ["streamlit", "run", "plataformacomision.py"]
