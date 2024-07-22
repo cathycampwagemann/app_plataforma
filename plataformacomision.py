@@ -28,9 +28,9 @@ logo_html = f"""
 components.html(logo_html, height=150)
 
 def get_env_variable(var_name):
-    var_value = st.secrets.get(var_name)
+    var_value = os.getenv(var_name)
     if not var_value:
-        st.error(f"{var_name} is not set in secrets.")
+        st.error(f"{var_name} is not set in environment variables.")
         st.stop()
     return var_value
 
