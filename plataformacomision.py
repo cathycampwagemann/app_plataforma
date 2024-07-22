@@ -77,22 +77,40 @@ except mysql.connector.Error as err:
     st.error(f"Error while creating connection pool: {err}")
     st.stop()
 
+@st.cache_resource
+def init_connection_pool():
+    try:
+        return pooling.MySQLConnectionPool(pool_name="mypool",
+                                           pool_size=4,  # Ajusta según tus necesidades
+                                           pool_reset_session=True,
+                                           **db_config)
+    except Error as err:
+        st.error(f"Error while creating connection pool: {err}")
+        st.stop()
+
+connection_pool = init_connection_pool()
+
 def get_connection():
     try:
-        return connection_pool.get_connection()
-    except mysql.connector.Error as err:
+        conn = connection_pool.get_connection()
+        if conn.is_connected():
+            return conn
+    except Error as err:
         st.error(f"Error while getting connection from pool: {err}")
-        st.stop()
+    return None
         
 def execute_query(query, params=None):
     conn = get_connection()
+    if conn is None:
+        st.error("No se pudo obtener una conexión a la base de datos.")
+        return None
     cursor = conn.cursor()
     try:
         cursor.execute(query, params)
         results = cursor.fetchall()
         return results
-    except mysql.connector.Error as err:
-        st.error(f"Error: {err}")
+    except Error as err:
+        st.error(f"Error ejecutando la consulta: {err}")
         return None
     finally:
         cursor.close()
@@ -141,11 +159,12 @@ def create_bucket_com_conciliadora(bucket_name_com_conciliadora):
 def authenticate_com_conciliadora(username, password):
     conn = get_connection()
     if conn is None:
+        st.error("No se pudo obtener una conexión a la base de datos.")
         return False
 
-    c = conn.cursor()
-
+    c = None
     try:
+        c = conn.cursor()
         # Usar %s como marcador de posición para los parámetros en MySQL
         c.execute('SELECT id, role FROM users WHERE username = %s AND password = %s', (username, password))
         user = c.fetchone()
@@ -155,12 +174,14 @@ def authenticate_com_conciliadora(username, password):
             st.session_state['user_role'] = user[1]
             return True
         return False
-    except mysql.connector.Error as err:
+    except Error as err:
         st.error(f"Error: {err}")
         return False
     finally:
-        c.close()
-        conn.close()
+        if c:
+            c.close()
+        if conn:
+            conn.close()
 
 # Función para autenticar comisión arbitral
 def authenticate_com_arbitral(username, password):
@@ -1369,16 +1390,21 @@ def get_user_buckets_com_arbitral(user_id):
         c.close()
         conn.close()
 
+@st.cache_data
 def get_user_buckets_com_conciliadora(user_id):
 
     conn = get_connection()
     if conn is None:
-        return
-
-    c = conn.cursor()
+        return []
 
     try:
-        c.execute('SELECT bucket_name_com_conciliadora FROM user_permissions_com_conciliadora WHERE user_id_com_conciliadora = %s', (user_id,))
+        c = conn.cursor()
+        query = '''
+        SELECT bucket_name_com_conciliadora 
+        FROM user_permissions_com_conciliadora 
+        WHERE user_id_com_conciliadora = %s
+        '''
+        c.execute(query, (user_id,))
         buckets = [row[0] for row in c.fetchall()]
         return buckets
     except Exception as e:
@@ -1402,15 +1428,26 @@ def get_causa_info_com_arbitral(bucket_name_com_arbitral):
         c.close()
         conn.close()
 
+@st.cache_data
 def get_causa_info_com_conciliadora(bucket_name_com_conciliadora):
     conn = get_connection()
     if conn is None:
-        return
+        st.error("No se pudo obtener una conexión a la base de datos.")
+        return None
 
-    c = conn.cursor()
     try:
-        c.execute('SELECT comision, requirente, requerido, fecha_inicio FROM causa_comision_conciliadora WHERE bucket_name_com_conciliadora = %s', (bucket_name_com_conciliadora,))
-        return c.fetchone()
+        c = conn.cursor()
+        query = '''
+        SELECT comision, requirente, requerido, fecha_inicio 
+        FROM causa_comision_conciliadora 
+        WHERE bucket_name_com_conciliadora = %s
+        '''
+        c.execute(query, (bucket_name_com_conciliadora,))
+        result = c.fetchone()
+        return result
+    except Error as err:
+        st.error(f"Error ejecutando la consulta: {err}")
+        return None
     finally:
         c.close()
         conn.close()
