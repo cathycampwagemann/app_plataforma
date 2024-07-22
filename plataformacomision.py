@@ -536,23 +536,6 @@ def asignar_nuevos_permisos():
 #Función para subir archivos comisión arbitral
 
 def upload_file_interface_com_arbitral():
-    """Interfaz para subir archivos cuando el modo de subida está activo."""
-
-    st.markdown("""
-        <style>
-        .upload-interface {
-            background-color: #E7F0F9;
-            border: 2px solid #00236F;
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-        </style>
-        """, unsafe_allow_html=True)
-
-    st.markdown('<div class="upload-interface">', unsafe_allow_html=True)
-
     st.title("Subir archivos")
     uploaded_files = st.file_uploader("Selecciona un archivo (incluyendo adjuntos)", accept_multiple_files=True, key="upload_file_uploader1")
     buckets_ca = get_user_buckets_com_arbitral(st.session_state['user_id_com_arbitral'])
