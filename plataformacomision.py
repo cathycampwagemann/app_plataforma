@@ -71,39 +71,32 @@ db_config = {
 # Configuración del pool de conexiones
 try:
     connection_pool = pooling.MySQLConnectionPool(pool_name="mypool",
-                                                  pool_size=20,
+                                                  pool_size=5,
                                                   **db_config)
-except Error as err:
+except mysql.connector.Error as err:
     st.error(f"Error while creating connection pool: {err}")
     st.stop()
 
-@st.cache_resource
 def get_connection():
     try:
         return connection_pool.get_connection()
-    except Error as err:
+    except mysql.connector.Error as err:
         st.error(f"Error while getting connection from pool: {err}")
-        return None
+        st.stop()
         
 def execute_query(query, params=None):
     conn = get_connection()
-    if conn is None:
-        st.error("Failed to obtain database connection.")
-        return None
-    cursor = None
+    cursor = conn.cursor()
     try:
-        cursor = conn.cursor()
         cursor.execute(query, params)
         results = cursor.fetchall()
         return results
-    except Error as err:
-        st.error(f"Error executing query: {err}")
+    except mysql.connector.Error as err:
+        st.error(f"Error: {err}")
         return None
     finally:
-        if cursor:
-            cursor.close()
-        if conn:
-            conn.close()
+        cursor.close()
+        conn.close()
 
 # Verificar el resto de las variables de entorno necesarias (SMTP)
 smtp_server = get_env_variable('SMTP_SERVER')
@@ -111,26 +104,6 @@ smtp_port = int(get_env_variable('SMTP_PORT'))
 from_email = get_env_variable('FROM_EMAIL')
 from_password = get_env_variable('FROM_PASSWORD')
 
-def authenticate_user(query, username, password):
-    conn = get_connection()
-    if conn is None:
-        st.error("Failed to obtain database connection.")
-        return None
-    c = None
-    try:
-        c = conn.cursor()
-        c.execute(query, (username, password))
-        user = c.fetchone()
-        return user
-    except Error as err:
-        st.error(f"Error: {err}")
-        return None
-    finally:
-        if c:
-            c.close()
-        if conn:
-            conn.close()
-        
 # Función para crear bucket Comisión arbitral
 def create_bucket_com_arbitral(bucket_name_com_arbitral):
     
@@ -166,25 +139,53 @@ def create_bucket_com_conciliadora(bucket_name_com_conciliadora):
 
 # Función para autenticar comisión arbitral y conciliadora
 def authenticate_com_conciliadora(username, password):
-    query = '''
-    SELECT u.id, u.role
-    FROM users u
-    JOIN user_permissions_com_conciliadora p ON u.id = p.user_id_com_conciliadora
-    WHERE u.username = %s AND u.password = %s
-    '''
-    return authenticate_user(query, username, password)
+    conn = get_connection()
+    if conn is None:
+        return False
+
+    c = conn.cursor()
+
+    try:
+        # Usar %s como marcador de posición para los parámetros en MySQL
+        c.execute('SELECT id, role FROM users WHERE username = %s AND password = %s', (username, password))
+        user = c.fetchone()
+        if user:
+            st.session_state['user_id_com_conciliadora'] = user[0]
+            st.session_state['username'] = username
+            st.session_state['user_role'] = user[1]
+            return True
+        return False
+    except mysql.connector.Error as err:
+        st.error(f"Error: {err}")
+        return False
+    finally:
+        c.close()
+        conn.close()
 
 # Función para autenticar comisión arbitral
 def authenticate_com_arbitral(username, password):
-    query = '''
-    SELECT u.id, u.role
-    FROM users u
-    JOIN user_permissions_com_arbitral p ON u.id = p.user_id_com_arbitral
-    WHERE u.username = %s AND u.password = %s
-    '''
-    return authenticate_user(query, username, password)
-        
-# Interfaz principal comisión arbitral
+    conn = get_connection()
+    if conn is None:
+        return False
+
+    c = conn.cursor()
+
+    try:
+        # Usar %s como marcador de posición para los parámetros en MySQL
+        c.execute('SELECT id, role FROM users WHERE username = %s AND password = %s', (username, password))
+        user = c.fetchone()
+        if user:
+            st.session_state['user_id_com_arbitral'] = user[0]
+            st.session_state['username'] = username
+            st.session_state['user_role'] = user[1]
+            return True
+        return False
+    except mysql.connector.Error as err:
+        st.error(f"Error: {err}")
+        return False
+    finally:
+        c.close()
+        conn.close()
 
 def main_interface_com_arbitral():
 
