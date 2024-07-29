@@ -39,18 +39,17 @@ access_key = get_env_variable('HMAC_ACCESS_KEY')
 secret_key = get_env_variable('HMAC_SECRET_KEY')
 
 # Configuración del cliente de storage
+storage_client = boto3.client(
+    's3',
+    aws_access_key_id=access_key,
+    aws_secret_access_key=secret_key,
+    endpoint_url='https://storage.googleapis.com',
+    config=Config(signature_version='s3v4')
+)
+
 @st.cache_resource
 def get_storage_client():
-    return boto3.client(
-        's3',
-        aws_access_key_id=access_key,
-        aws_secret_access_key=secret_key,
-        endpoint_url='https://storage.googleapis.com',
-        config=Config(signature_version='s3v4')
-    )
-
-# Inicializar el cliente de storage
-storage_client = get_storage_client()
+    return storage_client
 
 # Verificar y obtener las variables de entorno para la base de datos
 db_user = get_env_variable('DB_USER')
