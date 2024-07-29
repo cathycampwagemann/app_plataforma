@@ -16,7 +16,7 @@ from botocore.client import Config
 import mysql.connector
 from mysql.connector import pooling, Error
 
-drive_image_url = "data:image/jpeg;base64,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"
+drive_image_url = "https://www.dropbox.com/scl/fi/p6y1ke7uzcc55lhcv8e40/memb.png?rlkey=el6zhhlrxljm8knfew7w1r8yx&st=qsbg4z0r&raw=1"
 
 # HTML y CSS para centrar el logo en la interfaz
 logo_html = f"""
@@ -27,10 +27,12 @@ logo_html = f"""
 # Insertar el HTML en la aplicación Streamlit
 components.html(logo_html, height=150)
 
+load_dotenv()
+
 def get_env_variable(var_name):
-    var_value = os.getenv(var_name)
+    var_value = st.secrets.get(var_name) or os.environ.get(var_name)
     if not var_value:
-        st.error(f"{var_name} is not set in environment variables.")
+        st.error(f"{var_name} is not set in secrets or environment variables.")
         st.stop()
     return var_value
 
@@ -39,6 +41,7 @@ access_key = get_env_variable('HMAC_ACCESS_KEY')
 secret_key = get_env_variable('HMAC_SECRET_KEY')
 
 # Configuración del cliente de storage
+
 storage_client = boto3.client(
     's3',
     aws_access_key_id=access_key,
@@ -46,10 +49,6 @@ storage_client = boto3.client(
     endpoint_url='https://storage.googleapis.com',
     config=Config(signature_version='s3v4')
 )
-
-@st.cache_resource
-def get_storage_client():
-    return storage_client
 
 # Verificar y obtener las variables de entorno para la base de datos
 db_user = get_env_variable('DB_USER')
@@ -213,7 +212,6 @@ def main_interface_com_arbitral():
     user_id_com_arbitral = st.session_state['user_id_com_arbitral']
     buckets_ca = get_user_buckets_com_arbitral(st.session_state['user_id_com_arbitral'])
     st.title("Selecciona una causa")
-    st.sidebar.selectbox("SELECCIONA UNA CAUSA", buckets_ca, key="buckets_menu_ca")
     st.sidebar.button("Cerrar sesión", on_click=lambda: st.session_state.clear())
 
     if buckets_ca:
@@ -317,7 +315,6 @@ def main_interface_com_conciliadora():
     user_id_com_conciliadora = st.session_state['user_id_com_conciliadora']
     buckets_cc = get_user_buckets_com_conciliadora(st.session_state['user_id_com_conciliadora'])
     st.title("Selecciona una causa")
-    st.sidebar.selectbox("Selecciona una causa", buckets_cc, key="buckets_menu_cc")
     st.sidebar.button("Cerrar sesión", on_click=lambda: st.session_state.clear())
 
     if buckets_cc:
@@ -426,6 +423,7 @@ def crear_nueva_causa():
     comision = st.radio("Selecciona el tipo de comisión", ("Comisión Arbitral", "Comisión Conciliadora"))
 
     nombre_causa = st.text_input("Nombre de la causa (bucket)")
+    nombre_comision=st.text_input("Nombre de la Comisión")
     demandante = st.text_input("Demandante / Requirente")
     demandado = st.text_input("Demandado / Requerido")
     fecha_inicio = st.date_input("Fecha de inicio")
@@ -437,12 +435,12 @@ def crear_nueva_causa():
                     bucket_name = create_bucket_com_arbitral(nombre_causa)
                     if bucket_name:
                         c.execute('INSERT INTO causa_comision_arbitral (tribunal, demandante, demandado, fecha_inicio, bucket_name_com_arbitral) VALUES (%s, %s, %s, %s, %s)',
-                                  (comision, demandante, demandado, fecha_inicio.strftime('%Y-%m-%d'), nombre_causa))
+                                  (nombre_comision, demandante, demandado, fecha_inicio.strftime('%Y-%m-%d'), nombre_causa))
                 else:
                     bucket_name = create_bucket_com_conciliadora(nombre_causa)
                     if bucket_name:
                         c.execute('INSERT INTO causa_comision_conciliadora (comision, requirente, requerido, fecha_inicio, bucket_name_com_conciliadora) VALUES (%s, %s, %s, %s, %s)',
-                                  (comision, demandante, demandado, fecha_inicio.strftime('%Y-%m-%d'), nombre_causa))
+                                  (nombre_comision, demandante, demandado, fecha_inicio.strftime('%Y-%m-%d'), nombre_causa))
 
                 conn.commit()
                 st.success(f"Causa '{nombre_causa}' creada exitosamente.")
@@ -512,7 +510,7 @@ def create_bucket_com_conciliadora(bucket_name_com_conciliadora):
     except Exception as e:
         st.error(f"Error al crear el bucket com conciliadora: {e}")
         return client.bucket(bucket_name_com_conciliadora)
-
+        
 def asignar_nuevos_permisos():
     st.header("Usuarios y permisos")
 
@@ -559,7 +557,7 @@ def upload_file_interface_com_arbitral():
     st.title("Subir archivos")
     uploaded_files = st.file_uploader("Selecciona un archivo (incluyendo adjuntos)", accept_multiple_files=True, key="upload_file_uploader1")
     buckets_ca = get_user_buckets_com_arbitral(st.session_state['user_id_com_arbitral'])
-    selected_bucket_ca = st.selectbox("Selecciona una causa", buckets_ca,key="select_bucket1")
+    selected_bucket_ca = st.session_state.get('selected_bucket_ca', None)
     section = st.selectbox("Selecciona el cuaderno", ["Principal", "Incidente"], key="select_section")
     stage = st.selectbox("Selecciona la etapa", ["Discusión", "Probatorio", "Conciliación", "Citación a oír Sentencia", "Terminado"], key="select_stage")
 
@@ -998,24 +996,6 @@ def update_user_role(user_id, role):
         c.close()
         conn.close()
 
-def get_all_buckets_com_arbitral():
-    conn = get_connection()
-    if conn is None:
-        return
-
-    c = conn.cursor()
-
-    try:
-        c.execute("SELECT DISTINCT bucket_name_com_arbitral FROM user_permissions_com_arbitral")
-        bucketsca = [row[0] for row in c.fetchall()]
-        return bucketsca
-    except Exception as e:
-        st.error(f"Error en obtener buckets de Comisión Arbitral: {e}")
-        return []
-    finally:
-        c.close()
-        conn.close()
-
 def get_all_buckets_com_conciliadora():
     conn = get_connection()
     if conn is None:
@@ -1030,6 +1010,25 @@ def get_all_buckets_com_conciliadora():
     except Exception as e:
         st.error(f"Error en obtener buckets de Comisión Conciliadora: {e}")
         return []
+    finally:
+        c.close()
+        conn.close()
+
+def update_user_buckets_com_arbitral(user_id, buckets_com_arbitral):
+    conn = get_connection()
+    if conn is None:
+        return
+
+    c = conn.cursor()
+
+    try:
+        c.execute("DELETE FROM user_permissions_com_arbitral WHERE user_id_com_arbitral = %s", (user_id,))
+        for bucket1 in buckets_com_arbitral:
+            c.execute("INSERT INTO user_permissions_com_arbitral (user_id_com_arbitral, bucket_name_com_arbitral) VALUES (%s, %s)", (user_id, bucket1))
+        conn.commit()
+        st.success("Causas del usuario actualizadas.")
+    except Exception as e:
+        st.error(f"Error en actualizar las causas del usuario: {e}")
     finally:
         c.close()
         conn.close()
@@ -1372,46 +1371,27 @@ def send_email(to_email, subject, message):
 
 # Obtener bukets
 def get_user_buckets_com_arbitral(user_id):
-    conn = get_connection()
-    if conn is None:
-        return
-
-    c = conn.cursor()
-
-    try:
-        c.execute('SELECT bucket_name_com_arbitral FROM user_permissions_com_arbitral WHERE user_id_com_arbitral = %s', (user_id,))
-        buckets = [row[0] for row in c.fetchall()]
-        return buckets
-    except Exception as e:
-        st.error(f'Error al obtener buckets del usuario (Comisión Arbitral): {e}')
-        return []
-    finally:
-        c.close()
-        conn.close()
-
+    query = '''
+    SELECT bucket_name_com_arbitral 
+    FROM user_permissions_com_arbitral
+    WHERE user_id_com_arbitral = %s
+    '''
+    results = execute_query(query, (user_id,))
+    if results:
+        return [row[0] for row in results]
+    return []
+    
 @st.cache_data
 def get_user_buckets_com_conciliadora(user_id):
-
-    conn = get_connection()
-    if conn is None:
-        return []
-
-    try:
-        c = conn.cursor()
-        query = '''
-        SELECT bucket_name_com_conciliadora 
-        FROM user_permissions_com_conciliadora 
-        WHERE user_id_com_conciliadora = %s
-        '''
-        c.execute(query, (user_id,))
-        buckets = [row[0] for row in c.fetchall()]
-        return buckets
-    except Exception as e:
-        st.error(f'Error al obtener buckets del usuario (Comisión Conciliadora): {e}')
-        return []
-    finally:
-        c.close()
-        conn.close()
+    query = '''
+    SELECT bucket_name_com_conciliadora 
+    FROM user_permissions_com_conciliadora 
+    WHERE user_id_com_conciliadora = %s
+    '''
+    results = execute_query(query, (user_id,))
+    if results:
+        return [row[0] for row in results]
+    return []
 
 def get_causa_info_com_arbitral(bucket_name_com_arbitral):
     conn = get_connection()
@@ -1564,7 +1544,7 @@ chatbot_html = f"""
 <style>
 .chat-button {{
     position: fixed;
-    bottom: 100px;
+    top: 30px;
     right: 30px;
     background-color: #00236F;
     color: white;
@@ -1579,7 +1559,7 @@ chatbot_html = f"""
 .chat-window {{
     display: none;
     position: fixed;
-    bottom: 130px;
+    top: 70px;
     right: 30px;
     width: auto;
     max-width: 90%
@@ -1775,3 +1755,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+st.write("Desarrollada por Catherine Campbell Wagemann")
