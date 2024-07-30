@@ -42,8 +42,10 @@ def get_env_variable(var_name):
     try:
         # Intentar obtener la variable de entorno del Secret Manager
         return access_secret_version(project_id, var_name)
-    except Exception:
-        # Si no está en el Secret Manager, obtener de las variables de entorno normales
+    except Exception as e:
+        # Imprimir el error para depuración
+        print(f"Error accessing Secret Manager for {var_name}: {e}")
+        # Si no está en el Secret Manager, obtener de las variables de entorno locales
         var_value = os.getenv(var_name)  # Cargar directamente desde las variables de entorno
         if not var_value:
             st.error(f"{var_name} is not set in environment variables.")
