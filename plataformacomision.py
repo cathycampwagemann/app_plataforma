@@ -1,7 +1,7 @@
 import streamlit as st
 import os
+import google.cloud.secretmanager as secretmanager
 from google.cloud import storage
-from google.cloud import secretmanager
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
