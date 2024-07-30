@@ -1,6 +1,6 @@
 import streamlit as st
 import os
-from google.cloud import storage
+from google.cloud import storage,secretmanager
 import secrets
 import smtplib
 from email.mime.multipart import MIMEMultipart
@@ -16,6 +16,7 @@ from botocore.client import Config
 import mysql.connector
 from mysql.connector import pooling, Error
 
+
 drive_image_url = "https://www.dropbox.com/scl/fi/p6y1ke7uzcc55lhcv8e40/memb.png?rlkey=el6zhhlrxljm8knfew7w1r8yx&st=qsbg4z0r&raw=1"
 
 # HTML y CSS para centrar el logo en la interfaz
@@ -29,13 +30,25 @@ components.html(logo_html, height=150)
 
 load_dotenv()
 
-def get_env_variable(var_name):
-    var_value = st.secrets.get(var_name) or os.environ.get(var_name)
-    if not var_value:
-        st.error(f"{var_name} is not set in secrets or environment variables.")
-        st.stop()
-    return var_value
+def access_secret_version(project_id, secret_id, version_id="latest"):
+    client = secretmanager.SecretManagerServiceClient()
+    name = f"projects/{project_id}/secrets/{secret_id}/versions/{version_id}"
+    response = client.access_secret_version(name=name)
+    return response.payload.data.decode("UTF-8")
 
+def get_env_variable(var_name):
+    project_id = "arbitraje-428302"  # Reemplaza esto con tu ID de proyecto
+    try:
+        # Intentar obtener la variable de entorno del Secret Manager
+        return access_secret_version(project_id, var_name)
+    except Exception:
+        # Si no está en el Secret Manager, obtener de las variables de entorno normales
+        var_value = st.secrets.get(var_name) or os.environ.get(var_name)
+        if not var_value:
+            st.error(f"{var_name} is not set in secrets or environment variables.")
+            st.stop()
+        return var_value
+        
 # Verificar y obtener las credenciales HMAC desde las variables de entorno
 access_key = get_env_variable('HMAC_ACCESS_KEY')
 secret_key = get_env_variable('HMAC_SECRET_KEY')
