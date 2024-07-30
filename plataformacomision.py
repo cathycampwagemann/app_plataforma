@@ -44,18 +44,17 @@ def get_env_variable(var_name):
         return access_secret_version(project_id, var_name)
     except Exception:
         # Si no está en el Secret Manager, obtener de las variables de entorno normales
-        var_value = st.secrets.get(var_name) or os.environ.get(var_name)
+        var_value = os.getenv(var_name)  # Cargar directamente desde las variables de entorno
         if not var_value:
-            st.error(f"{var_name} is not set in secrets or environment variables.")
+            st.error(f"{var_name} is not set in environment variables.")
             st.stop()
         return var_value
-        
+
 # Verificar y obtener las credenciales HMAC desde las variables de entorno
 access_key = get_env_variable('HMAC_ACCESS_KEY')
 secret_key = get_env_variable('HMAC_SECRET_KEY')
 
 # Configuración del cliente de storage
-
 storage_client = boto3.client(
     's3',
     aws_access_key_id=access_key,
