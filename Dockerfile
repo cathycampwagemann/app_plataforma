@@ -1,21 +1,24 @@
-# Usar una imagen base oficial de Python
 FROM python:3.9-slim
 
-# Establecer el directorio de trabajo
 WORKDIR /app
 
-# Copiar el archivo de requisitos y luego instalar dependencias
+# Instalar dependencias del sistema
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    libssl-dev \
+    libffi-dev \
+    python3-dev \
+    && rm -rf /var/lib/apt/lists/*
+
 COPY requirements.txt requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copiar el contenido de la aplicación
 COPY . .
 
-# Exponer el puerto en el que Streamlit se ejecutará
 EXPOSE 8080
 
 ENV STREAMLIT_SERVER_PORT=8080
 ENV STREAMLIT_SERVER_ADDRESS=0.0.0.0
 
-# Comando para ejecutar la aplicación
 CMD ["streamlit", "run", "plataformacomision.py", "--server.port=8080", "--server.address=0.0.0.0"]
+
