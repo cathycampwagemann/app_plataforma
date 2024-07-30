@@ -18,4 +18,4 @@ ENV STREAMLIT_SERVER_PORT=8080
 ENV STREAMLIT_SERVER_ADDRESS=0.0.0.0
 
 # Comando para ejecutar la aplicación
-CMD ["streamlit", "run", "plataformacomision.py"]
+CMD ["streamlit", "run", "plataformacomision.py", "--server.port=8080", "--server.address=0.0.0.0"]
